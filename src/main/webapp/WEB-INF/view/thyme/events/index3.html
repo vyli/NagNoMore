@@ -1,0 +1,82 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Calendars - Events - Angular</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../../resources/css/gtvg.css" th:href="@{/resources/css/gtvg.css}" />
+
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../../resources/css/bootstrap.css" th:href="@{/resources/css/bootstrap.css}" />
+
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../../resources/css/fullcalendar.css" th:href="@{/resources/css/fullcalendar.css}" />
+
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../../resources/jquery-ui/jquery-ui.css" th:href="@{/resources/jquery-ui/jquery-ui.css}" />
+
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../../resources/jquery-ui/jquery-ui.theme.css" th:href="@{/resources/jquery-ui/jquery-ui.theme.css}" />
+
+
+    <script th:src="@{/resources/js/jquery-2.1.4.js}" src="../../resources/js/jquery-2.1.4.js"></script>
+    <script th:src="@{/resources/jquery-ui/jquery-ui.js}" src="../../resources/jquery-ui/jquery-ui.js"></script>
+
+    <script th:src="@{/resources/js/datetimepicker.js}" src="../../resources/js/datetimepicker.js"></script>
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../../resources/css/datetimepicker.css" th:href="@{/resources/css/datetimepicker.css}" />
+
+
+
+    <object th:include="/events/head :: head" th:remove="tag" />
+
+    <script type="application/javascript">
+        jQuery(document).ready(function() {
+            console.log("ready");
+            jQuery("pre").html("Hello X");
+        });
+
+    </script>
+
+</head>
+
+<body>
+
+
+<div id="container">
+    <h1 th:text="#{events.list.h1}">Events</h1>
+
+    <a href="/events/create.html" th:href="@{/event/create }"><span th:text="#{events.create}">Create Event</span></a>
+
+    <table id="listing">
+        <thead>
+        <tr>
+            <th th:text="#{events.th.id}">ID</th>
+            <th th:text="#{events.th.title}">Title</th>
+            <th th:text="#{events.th.start}">Start</th>
+            <th th:text="#{events.th.end}">End</th>
+            <th th:text="#{events.th.actions}">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="event : ${events}">
+            <td th:text="${event.id}">#1</td>
+            <td th:text="${event.title}">Laulua</td>
+            <td th:text="${#joda.format(event.start, 'dd.MM.yyyy HH:mm')}">1.4.2016 17:00</td>
+            <td th:text="${#joda.format(event.end, 'dd.MM.yyyy HH:mm')}">1.4.2016 18:00</td>
+            <td >
+                <a href="update.html" th:href="@{/event/update/{id}(id=${event.id})}"><span th:text="#{events.action.update}">Update...</span></a>
+
+                <a href="delete.html" th:href="@{/event/remove/{id}(id=${event.id})}"><span th:text="#{events.action.delete}">Delete...</span></a>
+                <a href="read.html" th:href="@{/event/read/{id}(id=${event.id})}"><span th:text="#{events.action.read}">Read...</span></a>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+
+</html>

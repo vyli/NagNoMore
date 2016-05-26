@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.2.xsd">
+
+
+    <context:component-scan base-package="edu.uta.sis.nagnomore">
+        <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
+    </context:component-scan>
+
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" />
+
+
+    <bean id="application.properties" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:app.properties</value>
+            </list>
+        </property>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="ignoreResourceNotFound" value="true"/>
+    </bean>
+
+    <bean  id="simpleMappingExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <!-- view name resolved using bean of type InternalResourceViewResolver (declared in mvc-view-config.xml) -->
+        <property name="defaultErrorView" value="exception"/>
+        <!-- results into 'WEB-INF/jsp/exception.jsp' -->
+        <property name="exceptionMappings">
+            <props>
+                <prop key="java.lang.Exception">/exception</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="myEmf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="edu.uta.sis" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">${app.hbm2ddl.auto}</prop>
+                <prop key="hibernate.dialect">${app.hibernate.dialect}</prop>
+                <prop key="hibernate.connection.useUnicode">true</prop>
+                <prop key="hibernate.connection.characterEncoding">utf8</prop>
+                <prop key="hibernate.connection.charSet">utf8</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${app.db.driver}" />
+        <property name="url" value="${app.db.url}" />
+        <property name="username" value="${app.db.user}" />
+        <property name="password" value="${app.db.password}" />
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="myEmf" />
+    </bean>
+
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="myAuthenticationProvider"/>
+    </security:authentication-manager>
+
+    <bean id="myAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="userService" />
+    </bean>
+
+
+    <security:http pattern="/resources/**" security="none" />
+    <security:http pattern="favicon.ico" security="none" />
+
+    <security:http use-expressions="true">
+
+        <security:access-denied-handler error-page="/accessdenied" />
+        <security:csrf disabled="true" />
+        <security:intercept-url pattern="/account/register"  access="permitAll"/>
+        <security:intercept-url pattern="/account/create"  access="permitAll"/>
+        <security:intercept-url pattern="/accounts/**"  access="hasRole('ROLE_ADMIN')"/>
+        <security:intercept-url pattern="/account/**"  access="hasAnyRole('ROLE_USER','ROLE_ADMIN')"/>
+
+        <security:intercept-url pattern="/events" access="permitAll" />
+        <security:intercept-url pattern="/events/*" access="permitAll" />
+        <security:intercept-url pattern="/events2" access="permitAll" />
+        <security:intercept-url pattern="/events2/*" access="permitAll" />
+        <security:intercept-url pattern="/events3" access="permitAll" />
+        <security:intercept-url pattern="/events3/*" access="permitAll" />
+
+        <security:intercept-url pattern="/location/**" access="permitAll" />
+
+        <security:intercept-url pattern="/event/show/*" access="permitAll" />
+        <security:intercept-url pattern="/event/**" access="isFullyAuthenticated()" />
+
+        <security:intercept-url pattern="/files/**" access="isFullyAuthenticated()" />
+
+        <security:intercept-url pattern="/"  access="permitAll"/>
+        <security:intercept-url pattern="/home"  access="permitAll"/>
+
+
+        <security:intercept-url pattern="/login"  access="permitAll"/>
+        <security:intercept-url pattern="/mylogin"  access="permitAll"/>
+        <security:intercept-url pattern="/loggedin"  access="permitAll"/>
+        <security:intercept-url pattern="/loggedout"  access="permitAll"/>
+        <security:intercept-url pattern="/loginerr"  access="permitAll"/>
+
+
+        <security:intercept-url pattern="/**" access="isFullyAuthenticated()" />
+        <security:form-login authentication-failure-url="/loginerr" login-page="/mylogin" default-target-url="/loggedin" />
+        <security:logout logout-success-url="/loggedout" />
+
+        <security:anonymous enabled="true" username="anonymous" granted-authority="ROLE_ANONYMOUS" />
+    </security:http>
+
+    <task:annotation-driven executor="myExecutor" scheduler="myScheduler"/>
+    <task:executor id="myExecutor" pool-size="10"/>
+    <task:scheduler id="myScheduler" pool-size="10"/>
+
+</beans>
