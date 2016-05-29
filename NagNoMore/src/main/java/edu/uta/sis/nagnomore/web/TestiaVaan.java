@@ -1,11 +1,7 @@
 package edu.uta.sis.nagnomore.web;
 
-import edu.uta.sis.nagnomore.data.entities.CalendarEntity;
-import edu.uta.sis.nagnomore.data.entities.EventEntity;
-import edu.uta.sis.nagnomore.data.entities.LocationEntity;
-import edu.uta.sis.nagnomore.data.repository.CalendarRepository;
-import edu.uta.sis.nagnomore.data.repository.EventsRepository;
-import edu.uta.sis.nagnomore.data.repository.LocationRepository;
+import edu.uta.sis.nagnomore.data.entities.*;
+import edu.uta.sis.nagnomore.data.repository.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,9 +24,14 @@ public class TestiaVaan {
     @Autowired
     LocationRepository locationRepository;
 
+    @Autowired
+    TaskRepository taskRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @RequestMapping("/test")
-    public void test() {
+    public String test() {
         Random r = new Random();
         int rand = r.nextInt((10000 - 1) + 1) + 1;
         LocationEntity le = new LocationEntity();
@@ -52,9 +53,28 @@ public class TestiaVaan {
 
         eventsRepository.add(e);
 
+        //UserEntity id:llä 1 on luotu erikseen
+        UserEntity ue = userRepository.getUser(1);
 
-        //eventsRepository.add(e);
+        TaskEntity te = new TaskEntity();
+        te.setTitle("Title" + rand);
+        te.setDescription("Desc" + rand);
+        DateTime dt = DateTime.now();
+        te.setCreated(dt);
+        DateTime due = dt.plusWeeks(2);
+        te.setDue(due);
+        te.setPriority(1);
+        te.setPrivacy(false);
+        te.setAlarm(false);
+        te.setCreator(ue);
+        te.setAssignee(ue);
+        te.setLocation(le);
+        TaskEntity.Status status = TaskEntity.Status.COMPLETED;
+        te.setStatus(status);
 
+        taskRepository.addTask(te);
+
+        return "/home";
 
     }
 
