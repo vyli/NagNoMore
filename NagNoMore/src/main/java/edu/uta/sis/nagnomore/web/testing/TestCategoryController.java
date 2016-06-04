@@ -1,4 +1,4 @@
-package edu.uta.sis.nagnomore.web;
+package edu.uta.sis.nagnomore.web.testing;
 
 import edu.uta.sis.nagnomore.data.entities.*;
 import edu.uta.sis.nagnomore.data.repository.*;
@@ -46,7 +46,6 @@ public class TestCategoryController {
 
 
         return "/home";
-
     }
 
     @RequestMapping("/catempty")

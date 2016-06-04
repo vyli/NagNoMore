@@ -1,4 +1,4 @@
-package edu.uta.sis.nagnomore.web.login;
+package edu.uta.sis.nagnomore.web.testing;
 
 import edu.uta.sis.nagnomore.data.entities.FamilyEntity;
 import edu.uta.sis.nagnomore.data.repository.FamilyRepository;
