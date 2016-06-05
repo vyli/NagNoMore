@@ -28,6 +28,11 @@ public class UserEntity {
 
     Boolean enabled;
 
+    String phoneNumber;
+
+    @ManyToOne
+    FamilyEntity family;
+
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     DateTime created;
 
@@ -98,5 +103,21 @@ public class UserEntity {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public FamilyEntity getFamily() {
+        return family;
+    }
+
+    public void setFamily(FamilyEntity family) {
+        this.family = family;
     }
 }

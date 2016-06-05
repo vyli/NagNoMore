@@ -24,18 +24,25 @@ public class TestiaVil {
         // Listing All Users
         System.out.println("Users in family 1: ");
         for (UserEntity u : ur.getUsersByFamily(fr.findFamily(1))) {
+            System.out.println("Username: " + u.getUsername() + ". Role: " + u.getRole());
         }
 
+        // Listing Children
         System.out.println("Children in family 1: ");
         for (UserEntity u : ur.getChildrenByFamily(fr.findFamily(1))) {
+            System.out.println("Username: " + u.getUsername() + ". Role: " + u.getRole());
         }
 
+        // Listing Parents
         System.out.println("Parents in family 1: ");
         for (UserEntity u : ur.getParentsByFamily(fr.findFamily(1))) {
+            System.out.println("Username: " + u.getUsername() + ". Role: " + u.getRole());
         }
 
+        // Listing Admins
         System.out.println("Admins in family 1: ");
         for (UserEntity u : ur.getAdminsByFamily(fr.findFamily(1))) {
+            System.out.println("Username: " + u.getUsername() + ". Role: " + u.getRole());
         }
 
         return "/home";

@@ -1,5 +1,6 @@
 package edu.uta.sis.nagnomore.data.repository.impl;
 
+import edu.uta.sis.nagnomore.data.entities.FamilyEntity;
 import edu.uta.sis.nagnomore.data.entities.UserEntity;
 import edu.uta.sis.nagnomore.data.repository.UserRepository;
 
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +30,31 @@ public class UserRepositoryImpl implements UserRepository {
 
     public List<UserEntity> getUsers() {
         return em.createQuery("FROM UserEntity u", UserEntity.class).getResultList();
+    }
+
+    public List<UserEntity> getUsersByFamily(FamilyEntity family) {
+        return em.createQuery("FROM UserEntity u WHERE u.family = :family", UserEntity.class)
+                .setParameter("family", family)
+                .getResultList();
+    }
+
+    public List<UserEntity> getChildrenByFamily(FamilyEntity family) {
+        return getUsersByRoleAndFamily(family, "ROLE_CHILD");
+    }
+
+    public List<UserEntity> getParentsByFamily(FamilyEntity family) {
+        return getUsersByRoleAndFamily(family, "ROLE_PARENT");
+    }
+
+    public List<UserEntity> getAdminsByFamily(FamilyEntity family) {
+        return getUsersByRoleAndFamily(family, "ROLE_ADMIN");
+    }
+
+    private List<UserEntity> getUsersByRoleAndFamily(FamilyEntity family, String role) {
+        return em.createQuery("FROM UserEntity u WHERE u.role = :role AND u.family = :family", UserEntity.class)
+                .setParameter("family", family)
+                .setParameter("role", role)
+                .getResultList();
     }
 
     public void store(UserEntity u) {
