@@ -54,7 +54,7 @@ public class TestiaVaan {
         eventsRepository.add(e);
 
         //UserEntity id:llä 1 on luotu erikseen
-        UserEntity ue = userRepository.getUser(1);
+        UserEntity ue = userRepository.getUserById(1);
 
         TaskEntity te = new TaskEntity();
         te.setTitle("Title" + rand);

@@ -108,6 +108,7 @@
         <security:intercept-url pattern="/"  access="permitAll"/>
         <security:intercept-url pattern="/home"  access="permitAll"/>
 
+        <security:intercept-url pattern="/vtest"  access="permitAll"/>
 
         <security:intercept-url pattern="/login"  access="permitAll"/>
         <security:intercept-url pattern="/mylogin"  access="permitAll"/>

@@ -10,9 +10,21 @@ import java.util.List;
  */
 public interface UserRepository {
 
+    /*
     public UserEntity getUser(Integer id);
 
     public UserEntity getUser(String username);
+    */
+
+    public UserEntity getUserById(Integer id);
+
+    public UserEntity getUserByUsername(String name);
+
+    public UserEntity getUserByFullName(String name);
+
+    public UserEntity getUserByEmail(String email);
+
+    public UserEntity getUserByPhoneNumber(String phoneNumber);
 
     public List<UserEntity> getUsers();
 
@@ -22,7 +34,7 @@ public interface UserRepository {
 
     public List<UserEntity> getParentsByFamily(FamilyEntity family);
 
-    public List<UserEntity> getAdminsByFamily(FamilyEntity family);
+    public List<UserEntity> getEldersByFamily(FamilyEntity family);
 
     public void store(UserEntity u);
 

@@ -5,6 +5,7 @@ import edu.uta.sis.nagnomore.data.entities.UserEntity;
 import edu.uta.sis.nagnomore.data.repository.UserRepository;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,17 +16,38 @@ import java.util.List;
  * Created by Hannu Lohtander on 5.4.2016.
  */
 @Repository
+@Transactional(readOnly = false)
 public class UserRepositoryImpl implements UserRepository {
 
     @PersistenceContext
     EntityManager em;
 
-    public UserEntity getUser(Integer id) {
+    public UserEntity getUserById(Integer id) {
         return em.find(UserEntity.class, id);
     }
 
-    public UserEntity getUser(String username) {
-        return em.createQuery("FROM UserEntity u WHERE u.username=:username", UserEntity.class).setParameter("username",username).getSingleResult();
+    public UserEntity getUserByUsername(String username) {
+        return em.createQuery("FROM UserEntity u WHERE u.username=:username", UserEntity.class)
+                .setParameter("username", username)
+                .getSingleResult();
+    }
+
+    public UserEntity getUserByFullName(String name) {
+        return em.createQuery("FROM UserEntity u WHERE u.fullName=:name", UserEntity.class)
+                .setParameter("name", name)
+                .getSingleResult();
+    }
+
+    public UserEntity getUserByEmail(String email) {
+        return em.createQuery("FROM UserEntity u WHERE u.email=:email", UserEntity.class)
+                .setParameter("email", email)
+                .getSingleResult();
+    }
+
+    public UserEntity getUserByPhoneNumber(String number) {
+        return em.createQuery("FROM UserEntity u WHERE u.phoneNumber=:number", UserEntity.class)
+                .setParameter("number", number)
+                .getSingleResult();
     }
 
     public List<UserEntity> getUsers() {
@@ -46,8 +68,8 @@ public class UserRepositoryImpl implements UserRepository {
         return getUsersByRoleAndFamily(family, "ROLE_PARENT");
     }
 
-    public List<UserEntity> getAdminsByFamily(FamilyEntity family) {
-        return getUsersByRoleAndFamily(family, "ROLE_ADMIN");
+    public List<UserEntity> getEldersByFamily(FamilyEntity family) {
+        return getUsersByRoleAndFamily(family, "ROLE_ELDER");
     }
 
     private List<UserEntity> getUsersByRoleAndFamily(FamilyEntity family, String role) {
@@ -66,7 +88,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     public void remove(Integer id) {
-        UserEntity ue = getUser(id);
+        UserEntity ue = getUserById(id);
         em.remove(ue);
     }
 }

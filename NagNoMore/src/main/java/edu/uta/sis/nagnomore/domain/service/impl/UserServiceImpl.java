@@ -26,12 +26,12 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
 
     public WwwUser getUser(String username) {
-        UserEntity u = userRepository.getUser(username);
+        UserEntity u = userRepository.getUserByUsername(username);
         return new WwwUser(new Long(u.getId()),u.getUsername(), u.getPassword(),u.getEmail(), u.getFullName(),u.getRole(), u.getCreated());
     }
 
     public WwwUser getUser(Long userId) {
-        UserEntity u = userRepository.getUser(userId.intValue());
+        UserEntity u = userRepository.getUserById(userId.intValue());
         return new WwwUser(new Long(u.getId()),u.getUsername(), u.getPassword(),u.getEmail(), u.getFullName(), u.getRole(),u.getCreated());
     }
 
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = false)
     public WwwUser update(Long id, String name, String email, String pw) {
-        UserEntity user = userRepository.getUser(id.intValue());
+        UserEntity user = userRepository.getUserById(id.intValue());
         user.setFullName(name);
         user.setEmail(email);
         if (!StringUtils.isEmpty(pw)) {
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = false)
     public void disable(Long id){
-        UserEntity e = userRepository.getUser(id.intValue());
+        UserEntity e = userRepository.getUserById(id.intValue());
         e.setEnabled(Boolean.FALSE);
         userRepository.update(e);
     }
