@@ -1,9 +1,8 @@
 package edu.uta.sis.nagnomore.web.testing;
 
-import edu.uta.sis.nagnomore.data.entities.*;
-import edu.uta.sis.nagnomore.data.repository.*;
+
+import edu.uta.sis.nagnomore.domain.data.Category;
 import edu.uta.sis.nagnomore.domain.service.CategoryService;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +17,6 @@ import java.util.Random;
 public class TestCategoryController {
 
     @Autowired
-    CategoryRepository categoryRepository;
-
-    @Autowired
     CategoryService categoryService;
 
     @RequestMapping("/catadd")
@@ -29,17 +25,17 @@ public class TestCategoryController {
         System.out.println("Starting category testing.");
 
         // Testing create()
-        CategoryEntity ce1 = new CategoryEntity();
+        Category ce1 = new Category();
         ce1.setTitle("Harrastukset");
         ce1.setDescription("Kategoria harrastusluonteiselle toiminnalle.");
         categoryService.create(ce1);
 
-        CategoryEntity ce2 = new CategoryEntity();
+        Category ce2 = new Category();
         ce2.setTitle("Lääkkeet");
         ce2.setDescription("Kategoria muistutuksille lääkkeenottoajoista.");
         categoryService.create(ce2);
 
-        CategoryEntity ce3 = new CategoryEntity();
+        Category ce3 = new Category();
         ce3.setTitle("Kotityöt");
         ce3.setDescription("Kategoria kotitöille.");
         categoryService.create(ce3);
@@ -51,7 +47,7 @@ public class TestCategoryController {
     @RequestMapping("/catempty")
     public String test2() {
 
-        List<CategoryEntity> catlist = categoryService.getCategories(); // This tests getCategories()
+        List<Category> catlist = categoryService.getCategories(); // This tests getCategories()
         int size = catlist.size();
 
         System.out.println("Removing " + size + " entries from Category table.");
@@ -75,12 +71,11 @@ public class TestCategoryController {
         test1();
 
         // Test updating the second entry;
-        List<CategoryEntity> catlist = categoryService.getCategories();
-        CategoryEntity ce = categoryService.get(catlist.get(1).getId()); // This test get()
-        ce.setTitle("Updated title");
-        ce.setDescription("Updated description");
-        categoryService.update(ce);                 // This test update()
-
+        List<Category> catlist = categoryService.getCategories();
+        Category c = categoryService.get(catlist.get(1).getId()); // This test get()
+        c.setTitle("Updated title");
+        c.setDescription("Updated description");
+        categoryService.update(c);                 // This test update()
 
         return "/home";
     }

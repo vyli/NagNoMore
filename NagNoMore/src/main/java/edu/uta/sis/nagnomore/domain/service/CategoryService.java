@@ -1,6 +1,6 @@
 package edu.uta.sis.nagnomore.domain.service;
 
-import edu.uta.sis.nagnomore.data.entities.CategoryEntity;
+import edu.uta.sis.nagnomore.domain.data.Category;
 
 import java.util.List;
 
@@ -9,13 +9,13 @@ import java.util.List;
  */
 public interface CategoryService {
 
-    public List<CategoryEntity> getCategories();
+    public List<Category> getCategories();
 
-    public CategoryEntity get(Integer id);
+    public Category get(Integer id);
 
-    public void update(CategoryEntity q);
+    public void update(Category q);
 
-    public CategoryEntity remove(CategoryEntity q);
+    public Category remove(Category q);
 
-    public void create(CategoryEntity q);
+    public void create(Category q);
 }
