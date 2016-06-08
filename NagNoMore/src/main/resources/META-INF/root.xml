@@ -89,7 +89,6 @@
         <security:csrf disabled="true" />
         <security:intercept-url pattern="/account/register"  access="permitAll"/>
         <security:intercept-url pattern="/account/create"  access="permitAll"/>
-        <security:intercept-url pattern="/account/**"  access="hasAnyRole('ROLE_USER','ROLE_ADMIN')"/>
 
         <security:intercept-url pattern="/events" access="permitAll" />
         <security:intercept-url pattern="/events/*" access="permitAll" />
