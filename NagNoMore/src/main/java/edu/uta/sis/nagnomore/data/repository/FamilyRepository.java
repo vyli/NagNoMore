@@ -17,16 +17,6 @@ public interface FamilyRepository {
     public FamilyEntity findFamily(Integer id);
     public void removeFamily(Integer id);
 
-    public List<UserEntity> listParents();
-    public List<UserEntity> listChildren();
-    public List<UserEntity> listFamilyMembers();
-
-    public List<FamilyEntity> listAllFamilies();    //  tarvittaneen vasta myöhemmin kun on usempia perheitä
-
-    public List<TaskEntity> findAllTasks() ;
-    public List<TaskEntity> findAllTasksExpiring(DateTime start, DateTime end);
-    public List<TaskEntity> findAllByCreator(UserEntity ue);
-    public List<TaskEntity> findAllByAssignee(UserEntity ue);
-
+    public List<FamilyEntity> listAllFamilies();    //
 
 }

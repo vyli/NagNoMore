@@ -31,32 +31,8 @@ public class FamilyRepositoryImpl implements FamilyRepository {
         em.remove(familyToRemove);
     }
 
-    public List<UserEntity> listParents() {
-        return em.createQuery("FROM UserEntity u Where u.role = 'adult'",UserEntity.class).getResultList();
-    }
-
-    public List<UserEntity> listChildren() {
-        return em.createQuery("FROM UserEntity u Where u.role = 'children'", UserEntity.class).getResultList();
-    }
-
-    public List<UserEntity> listFamilyMembers(){return em.createQuery("FROM UserEntity u", UserEntity.class).getResultList();}
-
-    //  tällaista tarvittaneen vasta myöhemmin kun on usempia perheitä
-    public List<FamilyEntity> listAllFamilies(){return em.createQuery("FROM FamilyEntity f",FamilyEntity.class).getResultList();}
-
-    // Onko loogisesti/rakenteellisesti parempi toteuttaa nämä 4 seur funktiota familyssa vai taskissa? Kun haetaan yleensä aina tietyn perheen taskeja?
-    public List<TaskEntity> findAllTasks() {return em.createQuery("FROM TaskEntity t",TaskEntity.class).getResultList(); }
-
-    public List<TaskEntity> findAllTasksExpiring(DateTime start, DateTime end) {
-        return em.createQuery("From TaskEntity t WHERE t.due BETWEEN :start AND :end",TaskEntity.class).getResultList();
-    }
-
-    public List<TaskEntity> findAllByCreator(UserEntity ue){
-        return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue",TaskEntity.class).getResultList();
-    }
-
-    public List<TaskEntity> findAllByAssignee(UserEntity ue){
-        return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue",TaskEntity.class).getResultList();
+    public List<FamilyEntity> listAllFamilies(){
+        return em.createQuery("FROM family f",FamilyEntity.class).getResultList();
     }
 
 }
