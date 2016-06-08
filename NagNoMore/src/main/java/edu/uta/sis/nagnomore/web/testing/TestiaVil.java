@@ -32,19 +32,19 @@ public class TestiaVil {
         ue1.setUsername("TestUser1");
         ue1.setRole("ROLE_CHILD");
         ue1.setFamily(fe);
-        ur.store(ue1);
+        ur.create(ue1);
 
         UserEntity ue2 = new UserEntity();
         ue2.setUsername("TestUser2");
         ue2.setRole("ROLE_PARENT");
         ue2.setFamily(fe);
-        ur.store(ue2);
+        ur.create(ue2);
 
         UserEntity ue3 = new UserEntity();
         ue3.setUsername("TestUser3");
         ue3.setRole("ROLE_ELDER");
         ue3.setFamily(fe);
-        ur.store(ue3);
+        ur.create(ue3);
 
         // Listing All Users in family
         System.out.println("Users in family 1: ");

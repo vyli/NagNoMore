@@ -10,6 +10,7 @@ public class UserRegisterForm {
     String password;
     String role;
     String fullName;
+    String phoneNumber;
 
     public String getUsername() {
         return username;
@@ -49,5 +50,13 @@ public class UserRegisterForm {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

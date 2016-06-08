@@ -11,19 +11,19 @@ import java.util.List;
  */
 public interface UserService extends UserDetailsService {
 
-    public WwwUser getUser(String username);
+    public WwwUser getUserByUsername(String username);
 
-    public WwwUser getUser(Long userId);
+    public WwwUser getUserById(Long userId);
 
     public UserDetails loadUserByUsername(String username);
 
-    public void register(WwwUser u);
-
     public List<WwwUser> getUsers();
 
-    public void remove(Long id);
-
-    public WwwUser update(Long id, String name, String email, String pw);
-
     public void disable(Long id);
+
+    public void create(WwwUser u);
+
+    public WwwUser update(Long id, String name, String email, String pw, String phone, String role);
+
+    public void remove(Long id);
 }

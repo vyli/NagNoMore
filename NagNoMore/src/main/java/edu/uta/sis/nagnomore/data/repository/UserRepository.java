@@ -36,7 +36,7 @@ public interface UserRepository {
 
     public List<UserEntity> getEldersByFamily(FamilyEntity family);
 
-    public void store(UserEntity u);
+    public void create(UserEntity u);
 
     public void update(UserEntity u);
 

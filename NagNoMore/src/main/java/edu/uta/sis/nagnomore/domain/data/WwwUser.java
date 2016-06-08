@@ -26,6 +26,7 @@ public class WwwUser implements UserDetails {
     protected boolean isCredentialsNonExpired=true;
 
     protected String email;
+    protected String phoneNumber;
 
     protected String fullName;
 
@@ -46,21 +47,23 @@ public class WwwUser implements UserDetails {
         enabled = true;
     }
 
-    public WwwUser(Long id, String username, String password, String email, String fullName, String role, Boolean enabled) {
+    public WwwUser(Long id, String username, String password, String email, String fullName, String phoneNumber, String role, Boolean enabled) {
         grantedAuthorities.add(new SimpleGrantedAuthority(role));
         setUsername(username);
         setPassword(password);
         setFullName(fullName);
+        setFullName(phoneNumber);
         setId(id);
         setEmail(email);
         setEnabled(enabled);
     }
 
-    public WwwUser(Long id, String username, String password, String email, String fullName, String role, DateTime created) {
+    public WwwUser(Long id, String username, String password, String email, String fullName, String phoneNumber, String role, DateTime created) {
         grantedAuthorities.add(new SimpleGrantedAuthority(role));
         setUsername(username);
         setPassword(password);
         setFullName(fullName);
+        setFullName(phoneNumber);
         setId(id);
         setEmail(email);
         setCreated(created);
@@ -126,6 +129,14 @@ public class WwwUser implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getFullName() {

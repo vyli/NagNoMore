@@ -25,30 +25,31 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
 
-    public WwwUser getUser(String username) {
+    public WwwUser getUserByUsername(String username) {
         UserEntity u = userRepository.getUserByUsername(username);
-        return new WwwUser(new Long(u.getId()),u.getUsername(), u.getPassword(),u.getEmail(), u.getFullName(),u.getRole(), u.getCreated());
+        return new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.getCreated());
     }
 
-    public WwwUser getUser(Long userId) {
+    public WwwUser getUserById(Long userId) {
         UserEntity u = userRepository.getUserById(userId.intValue());
-        return new WwwUser(new Long(u.getId()),u.getUsername(), u.getPassword(),u.getEmail(), u.getFullName(), u.getRole(),u.getCreated());
+        return new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.getCreated());
     }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        return getUser(username);
+        return getUserByUsername(username);
     }
 
     @Transactional(readOnly = false)
-    public void register(WwwUser u) {
+    public void create(WwwUser u) {
         UserEntity dbu = new UserEntity();
         dbu.setEmail(u.getEmail());
         dbu.setPassword(u.getPassword());
         dbu.setRole(u.getRole());
         dbu.setUsername(u.getUsername());
         dbu.setFullName(u.getFullName());
+        dbu.setPhoneNumber(u.getPhoneNumber());
         dbu.setEnabled(u.isEnabled());
-        userRepository.store(dbu);
+        userRepository.create(dbu);
         u.setId(dbu.getId().longValue());
     }
 
@@ -57,7 +58,7 @@ public class UserServiceImpl implements UserService {
         ArrayList<WwwUser> wwwUserArrayList = new ArrayList<WwwUser>();
         if (userEntities != null && !userEntities.isEmpty()) {
             for (UserEntity u : userEntities) {
-                wwwUserArrayList.add(new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getRole(), u.isEnabled()));
+                wwwUserArrayList.add(new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.isEnabled()));
             }
         }
         return wwwUserArrayList;
@@ -69,15 +70,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(readOnly = false)
-    public WwwUser update(Long id, String name, String email, String pw) {
+    public WwwUser update(Long id, String name, String email, String pw, String phone, String role) {
         UserEntity user = userRepository.getUserById(id.intValue());
         user.setFullName(name);
         user.setEmail(email);
+        user.setPhoneNumber(phone);
+        user.setRole(role);
         if (!StringUtils.isEmpty(pw)) {
             user.setPassword(pw);
         }
         userRepository.update(user);
-        WwwUser wwwUser = new WwwUser(id,user.getUsername(), user.getPassword(),user.getEmail(),user.getFullName(),user.getRole(),user.isEnabled());
+        WwwUser wwwUser = new WwwUser(id, user.getUsername(), user.getPassword(), user.getEmail(), user.getFullName(), user.getPhoneNumber(), user.getRole(), user.isEnabled());
         return wwwUser;
     }
 

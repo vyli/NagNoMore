@@ -79,7 +79,7 @@ public class UserRepositoryImpl implements UserRepository {
                 .getResultList();
     }
 
-    public void store(UserEntity u) {
+    public void create(UserEntity u) {
         em.persist(u);
     }
 

@@ -42,17 +42,19 @@ public class AccountController {
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
     public String register(@ModelAttribute("user") UserRegisterForm user, Model model) {
         // TODO @VALIDate
-        userService.register(new WwwUser(null, user.getUsername(), user.getPassword(), user.getEmail(), user.getFullName(), "ROLE_USER", Boolean.TRUE));
+        userService.create(new WwwUser(null, user.getUsername(), user.getPassword(), user.getEmail(), user.getFullName(), user.getPhoneNumber(), user.getRole(), Boolean.TRUE));
 
-        WwwUser u2 = userService.getUser(user.getUsername());
+        WwwUser u2 = userService.getUserByUsername(user.getUsername());
         model.addAttribute("user", u2);
         return "redirect:/account/show/" + u2.getId();
     }
 
     @RequestMapping(value = "/account/show/{id}", method = RequestMethod.GET)
     public String show(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
-        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getId() == id) {
-            WwwUser u = userService.getUser(id);
+        System.out.println("wwwuser id: " + user.getId());
+        System.out.println("path id: " + id);
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getId().longValue() == id.longValue()) {
+            WwwUser u = userService.getUserById(id);
             model.addAttribute("user", u);
             return "/account/account";
         } else {
@@ -70,8 +72,8 @@ public class AccountController {
 
     @RequestMapping(value = "/account/update/{id}", method = RequestMethod.GET)
     public String update(@PathVariable("id") Long id, Model model,@AuthenticationPrincipal WwwUser user) {
-        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getId() == id) {
-            WwwUser w1 = userService.getUser(id);
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getId().longValue() == id.longValue()) {
+            WwwUser w1 = userService.getUserById(id);
             model.addAttribute("user", w1);
             return "/account/update";
         } else {
@@ -82,8 +84,8 @@ public class AccountController {
         @RequestMapping(value = "/account/update/{id}", method = RequestMethod.POST)
     public String update(@PathVariable("id") Long id, @ModelAttribute("form") UserRegisterForm form, Model model,@AuthenticationPrincipal WwwUser user) {
         // ONLY ROLE_ADMIN is ALLOWED TO UPDATE ANY USER
-        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getId() == id) {
-            WwwUser w2 = userService.update(user.getId(), form.fullName, form.getEmail(), form.getPassword());
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getId().longValue() == id.longValue()) {
+            WwwUser w2 = userService.update(user.getId(), form.fullName, form.getEmail(), form.getPassword(), form.getPhoneNumber(), form.getRole());
 
             try {
                 List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
