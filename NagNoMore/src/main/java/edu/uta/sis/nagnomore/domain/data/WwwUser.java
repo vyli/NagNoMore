@@ -52,7 +52,7 @@ public class WwwUser implements UserDetails {
         setUsername(username);
         setPassword(password);
         setFullName(fullName);
-        setFullName(phoneNumber);
+        setPhoneNumber(phoneNumber);
         setId(id);
         setEmail(email);
         setEnabled(enabled);
@@ -63,7 +63,7 @@ public class WwwUser implements UserDetails {
         setUsername(username);
         setPassword(password);
         setFullName(fullName);
-        setFullName(phoneNumber);
+        setPhoneNumber(phoneNumber);
         setId(id);
         setEmail(email);
         setCreated(created);
