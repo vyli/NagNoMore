@@ -22,6 +22,7 @@
         <tr><th th:text="#{users.th.password}">Password</th><td><input type="text" name="password" value="password" th:value="${user.password}" /></td></tr>
         <tr><th th:text="#{users.th.fullname}">Fullname</th><td><input type="text" name="fullName" value="fullname" th:value="${user.fullName}" /></td></tr>
         <tr><th th:text="#{users.th.email}">Email</th><td><input type="text" name="email" value="email" th:value="${user.email}" /></td></tr>
+        <tr><th th:text="Phone">Phone</th><td><input type="text" name="phoneNumber" value="phoneNumber" th:value="${user.phoneNumber}" /></td></tr>
 
         <tr><th>&nbsp;</th><td>
             <button type="submit"><span th:text="#{users.action.create}">Register</span></button>

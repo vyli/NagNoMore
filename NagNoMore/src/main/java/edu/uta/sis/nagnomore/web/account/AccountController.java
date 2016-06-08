@@ -39,20 +39,8 @@ public class AccountController {
         return "/account/register";
     }
 
-    @RequestMapping(value = "/account/create", method = RequestMethod.POST)
-    public String register(@ModelAttribute("user") UserRegisterForm user, Model model) {
-        // TODO @VALIDate
-        userService.create(new WwwUser(null, user.getUsername(), user.getPassword(), user.getEmail(), user.getFullName(), user.getPhoneNumber(), user.getRole(), Boolean.TRUE));
-
-        WwwUser u2 = userService.getUserByUsername(user.getUsername());
-        model.addAttribute("user", u2);
-        return "redirect:/account/show/" + u2.getId();
-    }
-
     @RequestMapping(value = "/account/show/{id}", method = RequestMethod.GET)
     public String show(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
-        System.out.println("wwwuser id: " + user.getId());
-        System.out.println("path id: " + id);
         if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getId().longValue() == id.longValue()) {
             WwwUser u = userService.getUserById(id);
             model.addAttribute("user", u);
@@ -69,9 +57,8 @@ public class AccountController {
         return "/account/list";
     }
 
-
     @RequestMapping(value = "/account/update/{id}", method = RequestMethod.GET)
-    public String update(@PathVariable("id") Long id, Model model,@AuthenticationPrincipal WwwUser user) {
+    public String update(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
         if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getId().longValue() == id.longValue()) {
             WwwUser w1 = userService.getUserById(id);
             model.addAttribute("user", w1);
@@ -81,11 +68,19 @@ public class AccountController {
         }
     }
 
-        @RequestMapping(value = "/account/update/{id}", method = RequestMethod.POST)
-    public String update(@PathVariable("id") Long id, @ModelAttribute("form") UserRegisterForm form, Model model,@AuthenticationPrincipal WwwUser user) {
+    // TODO: Control who can change roles. Obvious security risk.
+    @RequestMapping(value = "/account/update/{id}", method = RequestMethod.POST)
+    public String update(@PathVariable("id") Long id, @ModelAttribute("form") UserRegisterForm form, Model model, @AuthenticationPrincipal WwwUser user) {
         // ONLY ROLE_ADMIN is ALLOWED TO UPDATE ANY USER
         if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getId().longValue() == id.longValue()) {
-            WwwUser w2 = userService.update(user.getId(), form.fullName, form.getEmail(), form.getPassword(), form.getPhoneNumber(), form.getRole());
+            WwwUser w2 = userService.update(
+                    user.getId(),
+                    form.getFullName(),
+                    form.getEmail(),
+                    form.getPassword(),
+                    form.getPhoneNumber(),
+                    form.getRole()
+            );
 
             try {
                 List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
@@ -97,10 +92,29 @@ public class AccountController {
                 logger.error("Failure in autoLogin", e);
             }
 
-            return "redirect::/account/show/" + w2.getId();
+            return "redirect:/account/show/" + w2.getId();
         } else {
             throw new AccessDeniedException("not.allowed");
         }
+    }
+
+    @RequestMapping(value = "/account/create", method = RequestMethod.POST)
+    public String register(@ModelAttribute("user") UserRegisterForm user, Model model) {
+        // TODO @VALIDate
+        userService.create(
+                new WwwUser(
+                        null,
+                        user.getUsername(),
+                        user.getPassword(),
+                        user.getEmail(),
+                        user.getFullName(),
+                        user.getPhoneNumber(),
+                        "ROLE_ELDER",
+                        Boolean.TRUE));
+
+        WwwUser u2 = userService.getUserByUsername(user.getUsername());
+        model.addAttribute("user", u2);
+        return "redirect:/account/show/" + u2.getId();
     }
 
     @RequestMapping(value = "/account/remove/{id}", method = RequestMethod.GET)

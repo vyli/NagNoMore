@@ -21,13 +21,15 @@
 <table>
     <tr><th th:text="#{users.th.id}">ID</th><td th:text="${user.id}">1</td></tr>
     <tr><th th:text="#{users.th.username}">Username</th><td th:text="${user.username}">heikki1</td></tr>
-    <tr><th th:text="#{users.th.password}">Password</th><td><input type="text" name="password" value="password" th:value="${user.password}" /></td></tr>
-    <tr><th th:text="#{users.th.fullname}">Fullname</th><td><input type="text" name="fullName" value="fullname" th:value="${user.fullName}" /></td></tr>
-    <tr><th th:text="#{users.th.email}">Email</th><td><input type="text" name="email" value="email" th:value="${user.email}" /></td></tr>
-    <tr><th th:text="#{users.th.role}">Role</th><td th:text="${user.role}">ROLE_USER</td></tr>
+    <tr><th th:text="Password">Password</th><td><input type="text" name="password" value="password" th:value="${user.password}" /></td></tr>
+    <tr><th th:text="Fullname">Fullname</th><td><input type="text" name="fullName" value="fullname" th:value="${user.fullName}" /></td></tr>
+    <tr><th th:text="Email">Email</th><td><input type="text" name="email" value="email" th:value="${user.email}" /></td></tr>
+    <tr><th th:text="Phone">Phone</th><td><input type="text" name="phoneNumber" value="phoneNumber" th:value="${user.phoneNumber}" /></td></tr>
+    <tr><th th:text="#{users.th.role}">Role</th><td><input type="text" name="role" value="role" th:value="${user.role}" /></td></tr>
 
     <tr><th th:text="#{events.th.actions}">Actions</th><td>
-        <a href="update.html" th:href="@{/account/update/{id}(id=${user.id})}"><span th:text="#{users.action.update}">Update</span></a>
+        <a href="update.html" th:href="@{/account/update/{id}(id=${user.Id})}"><span th:text="#{users.action.update}">Update</span></a>
+        <button type="submit"><span th:text="Submit">Submit</span></button>
     </td></tr>
 </table>
 </form>f
