@@ -2,6 +2,8 @@ package edu.uta.sis.nagnomore.web.testing;
 
 import edu.uta.sis.nagnomore.data.entities.FamilyEntity;
 import edu.uta.sis.nagnomore.data.repository.FamilyRepository;
+import edu.uta.sis.nagnomore.domain.data.WwwFamily;
+import edu.uta.sis.nagnomore.domain.service.FamilyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,22 +17,51 @@ import java.util.List;
 public class TestiaHannan {
 
     @Autowired
-    FamilyRepository familyRepository;
+    FamilyRepository familyRepository;          // For the last 2 tests
 
-    @RequestMapping("/createFam")
+    @Autowired
+    FamilyService familyService;                // For the first test
+
+    @RequestMapping("/serviceFamilyTesting")
+    public String serviceTesting(){
+        WwwFamily wwwFamily = new WwwFamily();
+        wwwFamily.setFamilyName("Brown");
+        familyService.addFamily(wwwFamily);                             // test add()
+
+        wwwFamily.setFamilyName("Lee");
+        familyService.addFamily(wwwFamily);                             // test add()
+
+        List<WwwFamily> families = familyService.listAllFamilies();    // test ListAllF()
+        for(WwwFamily f: families){
+            System.out.println(f.getFamilyName());
+        }
+        WwwFamily fToUpdate = familyService.findFamily(families.get(0).getId());   // test findFamily()
+        System.out.println("Find done, before update");
+        fToUpdate.setFamilyName("All New Rocks-Smith");
+        familyService.updateFamily(fToUpdate);                          // test update()
+
+        System.out.println(familyService.findFamily(families.get(0).getId()).getFamilyName()); // print first
+        familyService.removeFamily(families.get(families.size()-1).getId());    //test remove(last one)
+        familyService.removeFamily(families.get(families.size()-2).getId());    //test remove( second last one)
+        return "/home";
+    }
+
+
+
+    @RequestMapping("/repositoryCreateFam")
     public String createFam(){
         System.out.println("Creating families");
 
         FamilyEntity fe = new FamilyEntity();               // create FamilyEntity test
-        fe.setFamilyName("familyName Smith");
+        fe.setFamilyName("Smith");
         familyRepository.addFamily(fe);
 
         FamilyEntity fe2 = new FamilyEntity();
-        fe2.setFamilyName("family2Name Brown");
+        fe2.setFamilyName("Brown");
         familyRepository.addFamily(fe2);
 
         FamilyEntity fe3 = new FamilyEntity();
-        fe3.setFamilyName("family3Name Wilson");
+        fe3.setFamilyName("Wilson");
         familyRepository.addFamily(fe3);
 
         System.out.println("Listing all families:");
@@ -42,7 +73,7 @@ public class TestiaHannan {
         return "/home";
     }
 
-    @RequestMapping("/Htest")
+    @RequestMapping("/HtestRepository")
     public String first(){
 
         System.out.println("Starting family testing.");
@@ -61,7 +92,7 @@ public class TestiaHannan {
 
         familyRepository.removeFamily(fe.getId());                      // Repository remove test
 
-        System.out.println("Ending Family testing.");
+        System.out.println("Ending Family Repository testing.");
 
         return "/home";
     }
