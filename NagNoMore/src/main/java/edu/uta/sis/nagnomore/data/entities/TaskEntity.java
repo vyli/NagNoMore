@@ -4,6 +4,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by mare on 29.5.2016.
@@ -17,27 +18,34 @@ public class TaskEntity {
     @GeneratedValue
     Integer id;
 
+    @Column
     String title;
+
+    @Column
     String description;
 
+    @Column
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     DateTime created;
 
+    @Column
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     DateTime due;
 
+    @Column
     Integer priority;
 
+    @Column
     Boolean privacy;
+
+    @Column
     Boolean alarm;
 
-    //En ole koskaan toteuttanut ManyToManya plus koko CategoryEntity puuttuu, joten toistaiseksi kommentoitu pois
-    //@ManyToMany
-    //CategoryEntity category;
+    @ManyToOne
+    CategoryEntity category;
 
-    //FamilyEntity puuttuu vielä, joten kommentoitu pois
-    //@ManyToOne
-    //FamilyEntity family;
+    @ManyToOne
+    FamilyEntity family;
 
     @ManyToOne
     UserEntity creator;
@@ -52,11 +60,11 @@ public class TaskEntity {
         NEEDS_ACTION, IN_PROGRESS, COMPLETED
     }
 
+    @Column
     Status status;
 
-    //ReminderEntity puuttuu vielä
-    //@OneToMany(fetch = FetchType.EAGER)
-    //List<ReminderEntity> reminderList;
+    @OneToMany(fetch = FetchType.EAGER)
+    List<ReminderEntity> reminderList;
 
 
     public Integer getId() {
