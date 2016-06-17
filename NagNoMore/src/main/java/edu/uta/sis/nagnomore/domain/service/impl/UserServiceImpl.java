@@ -2,6 +2,9 @@ package edu.uta.sis.nagnomore.domain.service.impl;
 
 import edu.uta.sis.nagnomore.data.entities.UserEntity;
 import edu.uta.sis.nagnomore.data.repository.UserRepository;
+import edu.uta.sis.nagnomore.data.entities.FamilyEntity;
+import edu.uta.sis.nagnomore.data.repository.FamilyRepository;
+import edu.uta.sis.nagnomore.domain.data.WwwFamily;
 import edu.uta.sis.nagnomore.domain.data.WwwUser;
 import edu.uta.sis.nagnomore.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +27,92 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
-
-    public WwwUser getUserByUsername(String username) {
-        UserEntity u = userRepository.getUserByUsername(username);
-        return new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.getCreated());
-    }
+    @Autowired
+    FamilyRepository familyRepository;
 
     public WwwUser getUserById(Long userId) {
         UserEntity u = userRepository.getUserById(userId.intValue());
         return new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.getCreated());
     }
 
+    public WwwUser getUserByUsername(String username) {
+        UserEntity u = userRepository.getUserByUsername(username);
+        return new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.getCreated());
+    }
+
+    public WwwUser getUserByFullName(String name) {
+        UserEntity u = userRepository.getUserByFullName(name);
+        return new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.getCreated());
+    }
+
+    public WwwUser getUserByEmail(String email) {
+        UserEntity u = userRepository.getUserByEmail(email);
+        return new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.getCreated());
+    }
+
+    public WwwUser getUserByPhoneNumber(String phoneNumber) {
+        UserEntity u = userRepository.getUserByPhoneNumber(phoneNumber);
+        return new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.getCreated());
+    }
+
+    // TODO: Remove this?
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         return getUserByUsername(username);
+    }
+
+    public List<WwwUser> getUsers() {
+        List<UserEntity> userEntities = userRepository.getUsers();
+        ArrayList<WwwUser> wwwUserArrayList = new ArrayList<WwwUser>();
+        if (userEntities != null && !userEntities.isEmpty()) {
+            for (UserEntity u : userEntities) {
+                wwwUserArrayList.add(new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.isEnabled()));
+            }
+        }
+        return wwwUserArrayList;
+    }
+
+    public List<WwwUser> getUsersByFamily(WwwFamily family) {
+        List<UserEntity> userEntities = userRepository.getUsersByFamily(familyRepository.findFamily(family.getId()));
+        ArrayList<WwwUser> wwwUserArrayList = new ArrayList<WwwUser>();
+        if (userEntities != null && !userEntities.isEmpty()) {
+            for (UserEntity u : userEntities) {
+                wwwUserArrayList.add(new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.isEnabled()));
+            }
+        }
+        return wwwUserArrayList;
+    }
+
+    public List<WwwUser> getChildrenByFamily(WwwFamily family) {
+        List<UserEntity> userEntities = userRepository.getChildrenByFamily(familyRepository.findFamily(family.getId()));
+        ArrayList<WwwUser> wwwUserArrayList = new ArrayList<WwwUser>();
+        if (userEntities != null && !userEntities.isEmpty()) {
+            for (UserEntity u : userEntities) {
+                wwwUserArrayList.add(new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.isEnabled()));
+            }
+        }
+        return wwwUserArrayList;
+    }
+
+    public List<WwwUser> getParentsByFamily(WwwFamily family) {
+        List<UserEntity> userEntities = userRepository.getParentsByFamily(familyRepository.findFamily(family.getId()));
+        ArrayList<WwwUser> wwwUserArrayList = new ArrayList<WwwUser>();
+        if (userEntities != null && !userEntities.isEmpty()) {
+            for (UserEntity u : userEntities) {
+                wwwUserArrayList.add(new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.isEnabled()));
+            }
+        }
+        return wwwUserArrayList;
+    }
+
+    public List<WwwUser> getEldersByFamily(WwwFamily family) {
+        List<UserEntity> userEntities = userRepository.getEldersByFamily(familyRepository.findFamily(family.getId()));
+        ArrayList<WwwUser> wwwUserArrayList = new ArrayList<WwwUser>();
+        if (userEntities != null && !userEntities.isEmpty()) {
+            for (UserEntity u : userEntities) {
+                wwwUserArrayList.add(new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.isEnabled()));
+            }
+        }
+        return wwwUserArrayList;
     }
 
     @Transactional(readOnly = false)
@@ -49,19 +125,9 @@ public class UserServiceImpl implements UserService {
         dbu.setFullName(u.getFullName());
         dbu.setPhoneNumber(u.getPhoneNumber());
         dbu.setEnabled(u.isEnabled());
+        dbu.setFamily(familyRepository.findFamily(u.getFamily().getId()));
         userRepository.create(dbu);
         u.setId(dbu.getId().longValue());
-    }
-
-    public List<WwwUser> getUsers() {
-        List<UserEntity> userEntities = userRepository.getUsers();
-        ArrayList<WwwUser> wwwUserArrayList = new ArrayList<WwwUser>();
-        if (userEntities != null && !userEntities.isEmpty()) {
-            for (UserEntity u : userEntities) {
-                wwwUserArrayList.add(new WwwUser(new Long(u.getId()), u.getUsername(), u.getPassword(), u.getEmail(), u.getFullName(), u.getPhoneNumber(), u.getRole(), u.isEnabled()));
-            }
-        }
-        return wwwUserArrayList;
     }
 
     @Transactional(readOnly = false)

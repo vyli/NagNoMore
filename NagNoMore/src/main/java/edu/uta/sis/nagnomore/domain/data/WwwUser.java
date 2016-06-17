@@ -30,6 +30,8 @@ public class WwwUser implements UserDetails {
 
     protected String fullName;
 
+    protected WwwFamily family;
+
     protected DateTime created;
 
     public WwwUser() {
@@ -145,6 +147,14 @@ public class WwwUser implements UserDetails {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public WwwFamily getFamily() {
+        return family;
+    }
+
+    public void setFamily(WwwFamily family) {
+        this.family = family;
     }
 
     public DateTime getCreated() {
