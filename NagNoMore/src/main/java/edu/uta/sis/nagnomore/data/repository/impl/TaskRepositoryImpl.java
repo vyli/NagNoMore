@@ -1,8 +1,11 @@
 package edu.uta.sis.nagnomore.data.repository.impl;
 
+import edu.uta.sis.nagnomore.data.entities.CategoryEntity;
+import edu.uta.sis.nagnomore.data.entities.LocationEntity;
 import edu.uta.sis.nagnomore.data.entities.TaskEntity;
 import edu.uta.sis.nagnomore.data.entities.UserEntity;
 import edu.uta.sis.nagnomore.data.repository.TaskRepository;
+import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,13 +48,42 @@ public class TaskRepositoryImpl implements TaskRepository {
         return em.createQuery("From TaskEntity t", TaskEntity.class).getResultList();
     }
 
+
+    public List<TaskEntity> findAllByLocation(LocationEntity le) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.location=:le", TaskEntity.class)
+                .setParameter("le", le)
+                .getResultList();
+
+    }
+
+    public List<TaskEntity> findAllByCategory(CategoryEntity ce) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.category=:ce", TaskEntity.class)
+                .setParameter("ce", ce)
+                .getResultList();
+
+    }
+
     public List<TaskEntity> findAllByCreator(UserEntity ue) {
-        //TODO Taskien hakeminen jollain ehdolla tekemättä
-        return null;
+
+        return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue", TaskEntity.class)
+                .setParameter("ue", ue)
+                .getResultList();
+
     }
 
     public List<TaskEntity> findAllByAssignee(UserEntity ue) {
-        //TODO Taskien hakeminen jollain ehdolla tekemättä
-        return null;
+
+        return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue", TaskEntity.class)
+                .setParameter("ue", ue)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByStatus(TaskEntity.Status s) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.status=:s", TaskEntity.class)
+                .setParameter("s", s)
+                .getResultList();
     }
 }

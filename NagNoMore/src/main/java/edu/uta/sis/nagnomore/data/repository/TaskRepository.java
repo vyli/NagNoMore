@@ -1,5 +1,7 @@
 package edu.uta.sis.nagnomore.data.repository;
 
+import edu.uta.sis.nagnomore.data.entities.CategoryEntity;
+import edu.uta.sis.nagnomore.data.entities.LocationEntity;
 import edu.uta.sis.nagnomore.data.entities.TaskEntity;
 import edu.uta.sis.nagnomore.data.entities.UserEntity;
 
@@ -15,10 +17,11 @@ public interface TaskRepository {
     public TaskEntity find(Integer id);
     public TaskEntity remove(Integer id);
     public List<TaskEntity> findAll();
+    public List<TaskEntity> findAllByLocation(LocationEntity le);
+    public List<TaskEntity> findAllByCategory(CategoryEntity ce);
     public List<TaskEntity> findAllByCreator(UserEntity ue);
     public List<TaskEntity> findAllByAssignee(UserEntity ue);
-    //Enumit on mulle vieraita, en tiedä, toimiiko vertailu Stringiin vai miten pitää toteuttaa
-    //public List<TaskEntity> findAllByStatus(String status);
+    public List<TaskEntity> findAllByStatus(TaskEntity.Status status);
 
 
 }
