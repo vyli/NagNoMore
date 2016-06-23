@@ -11,6 +11,7 @@ public interface FamilyService {
     public void addFamily(WwwFamily f);
     public void updateFamily(WwwFamily f);
     public WwwFamily findFamily(Integer id);
+    public WwwFamily findFamilyByName(String name);
     public void removeFamily(Integer id);
 
     public List<WwwFamily> listAllFamilies();

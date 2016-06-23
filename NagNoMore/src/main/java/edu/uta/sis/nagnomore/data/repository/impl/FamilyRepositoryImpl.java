@@ -26,6 +26,18 @@ public class FamilyRepositoryImpl implements FamilyRepository {
     public void addFamily(FamilyEntity fe) { em.persist(fe); }
     public void updateFamily(FamilyEntity fe) { em.merge(fe);}
     public FamilyEntity findFamily(Integer id) {return em.find(FamilyEntity.class,id);}
+    public FamilyEntity findFamilyByName(String name){
+        return em.createQuery("FROM family f WHERE f.familyName=:name",FamilyEntity.class)
+                .setParameter("name",name)
+                .getSingleResult();
+    }
+    /*
+    public UserEntity getUserByFullName(String name) {
+        return em.createQuery("FROM UserEntity u WHERE u.fullName=:name", UserEntity.class)
+                .setParameter("name", name)
+                .getSingleResult();
+    }
+*/
     public void removeFamily(Integer id) {
         FamilyEntity familyToRemove = findFamily(id);
         em.remove(familyToRemove);

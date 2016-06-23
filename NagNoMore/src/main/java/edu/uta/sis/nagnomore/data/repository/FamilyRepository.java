@@ -15,6 +15,7 @@ public interface FamilyRepository {
     public void addFamily(FamilyEntity fe);
     public void updateFamily(FamilyEntity id);
     public FamilyEntity findFamily(Integer id);
+    public FamilyEntity findFamilyByName(String name);
     public void removeFamily(Integer id);
 
     public List<FamilyEntity> listAllFamilies();    //

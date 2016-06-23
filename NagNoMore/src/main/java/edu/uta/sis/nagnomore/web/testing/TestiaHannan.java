@@ -35,8 +35,9 @@ public class TestiaHannan {
         for(WwwFamily f: families){
             System.out.println(f.getFamilyName());
         }
-        WwwFamily fToUpdate = familyService.findFamily(families.get(0).getId());   // test findFamily()
-        System.out.println("Find done, before update");
+
+        System.out.println( "2nd FamilyName in DB: "+ (familyService.findFamilyByName(families.get(1).getFamilyName()) ).getFamilyName() );
+        WwwFamily fToUpdate = familyService.findFamily(families.get(0).getId());   // test findFamily() & findFamilyByName()
         fToUpdate.setFamilyName("All New Rocks-Smith");
         familyService.updateFamily(fToUpdate);                          // test update()
 
@@ -80,6 +81,7 @@ public class TestiaHannan {
 
         FamilyEntity fe = new FamilyEntity();               // create FamilyEntity test
         fe.setFamilyName("First family name");
+        System.out.println(fe.getFamilyName());                         // Entity getFamilyName test
 
         familyRepository.addFamily(fe);     // Repository add test
 
@@ -89,6 +91,8 @@ public class TestiaHannan {
         FamilyEntity copyedFe = familyRepository.findFamily(fe.getId()); // Repository find test
         System.out.println(fe.getFamilyName());                         // Entity getFamilyName test
         System.out.println(copyedFe.getFamilyName());
+
+        System.out.println("Test FindFamilyByName. FamilyName is: " + familyRepository.findFamilyByName( fe.getFamilyName()).getFamilyName());
 
         familyRepository.removeFamily(fe.getId());                      // Repository remove test
 
