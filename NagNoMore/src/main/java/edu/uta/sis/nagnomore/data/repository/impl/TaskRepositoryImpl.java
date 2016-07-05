@@ -1,9 +1,6 @@
 package edu.uta.sis.nagnomore.data.repository.impl;
 
-import edu.uta.sis.nagnomore.data.entities.CategoryEntity;
-import edu.uta.sis.nagnomore.data.entities.LocationEntity;
-import edu.uta.sis.nagnomore.data.entities.TaskEntity;
-import edu.uta.sis.nagnomore.data.entities.UserEntity;
+import edu.uta.sis.nagnomore.data.entities.*;
 import edu.uta.sis.nagnomore.data.repository.TaskRepository;
 import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Repository;
@@ -80,9 +77,81 @@ public class TaskRepositoryImpl implements TaskRepository {
                 .getResultList();
     }
 
+    public List<TaskEntity> findAllByPriority(Integer p) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.priority=:p", TaskEntity.class)
+                .setParameter("p", p)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByFamily(FamilyEntity fe) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.family=:fe", TaskEntity.class)
+                .setParameter("fe", fe)
+                .getResultList();
+    }
+
     public List<TaskEntity> findAllByStatus(TaskEntity.Status s) {
 
         return em.createQuery("FROM TaskEntity t WHERE t.status=:s", TaskEntity.class)
+                .setParameter("s", s)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByCreatorAndStatus(UserEntity ue, TaskEntity.Status s) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND t.status=:s", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("s", s)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByAssigneeAndStatus(UserEntity ue, TaskEntity.Status s) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND t.status=:s", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("s", s)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByCreatorAndCategory(UserEntity ue, CategoryEntity ce) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND t.category=:ce", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("ce", ce)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByAssigneeAndCategory(UserEntity ue, CategoryEntity ce) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND t.category=:ce", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("ce", ce)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByFamilyAndCategory(FamilyEntity fe, CategoryEntity ce) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.family=:fe AND t.category=:ce", TaskEntity.class)
+                .setParameter("fe", fe)
+                .setParameter("ce", ce)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByCreatorAndCategoryAndStatus(UserEntity ue, CategoryEntity ce, TaskEntity.Status s) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND t.category=:ce AND t.status=:s", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("ce", ce)
+                .setParameter("s", s)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByAssigneeAndCategoryAndStatus(UserEntity ue, CategoryEntity ce, TaskEntity.Status s) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND t.category=:ce AND t.status=:s", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("ce", ce)
                 .setParameter("s", s)
                 .getResultList();
     }

@@ -34,7 +34,7 @@ public class Task {
 
     Boolean alarm;
 
-    String category;
+    Category category;
 
     String family;
 
@@ -66,6 +66,22 @@ public class Task {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public String getFamily() {
+        return family;
+    }
+
+    public void setFamily(String family) {
+        this.family = family;
     }
 
     public String getDescription() {

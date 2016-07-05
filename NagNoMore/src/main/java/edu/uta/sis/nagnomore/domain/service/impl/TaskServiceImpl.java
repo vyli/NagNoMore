@@ -134,5 +134,58 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    public List<Task> findAllByCreatorAndStatus(WwwUser u, Task.Status status) {
+
+        UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
+        TaskEntity.Status s1 = null;
+        switch (status) {
+            case NEEDS_ACTION:
+                s1 = TaskEntity.Status.NEEDS_ACTION;
+                break;
+            case IN_PROGRESS:
+                s1 = TaskEntity.Status.IN_PROGRESS;
+                break;
+            case COMPLETED:
+                s1 = TaskEntity.Status.COMPLETED;
+                break;
+        }
+
+        List <TaskEntity> list = taskRepository.findAllByCreatorAndStatus(ue, s1);
+
+        ArrayList<Task> tasks = new ArrayList<Task>(list.size());
+        for (TaskEntity te: list) {
+            Task t = new Task();
+            BeanUtils.copyProperties(te,t);
+            tasks.add(t);
+        }
+        return tasks;
+    }
+
+    public List<Task> findAllByAssigneeAndStatus(WwwUser u, Task.Status status) {
+
+        UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
+        TaskEntity.Status s1 = null;
+        switch (status) {
+            case NEEDS_ACTION:
+                s1 = TaskEntity.Status.NEEDS_ACTION;
+                break;
+            case IN_PROGRESS:
+                s1 = TaskEntity.Status.IN_PROGRESS;
+                break;
+            case COMPLETED:
+                s1 = TaskEntity.Status.COMPLETED;
+                break;
+        }
+
+        List <TaskEntity> list = taskRepository.findAllByAssigneeAndStatus(ue, s1);
+
+        ArrayList<Task> tasks = new ArrayList<Task>(list.size());
+        for (TaskEntity te: list) {
+            Task t = new Task();
+            BeanUtils.copyProperties(te,t);
+            tasks.add(t);
+        }
+        return tasks;
+    }
 
 }

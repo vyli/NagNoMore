@@ -22,12 +22,15 @@ public interface TaskService {
     public List<Task> findAll();
 
     // Eero 21.6.2016 location DataClass and Service missing, currently not assigned foe antyone
+    // I do not think this is needed at all.
     //public List<Task> findAllByLocation(Location l);
 
     public List<Task> findAllByCategory(Category c);
     public List<Task> findAllByCreator(WwwUser u);
     public List<Task> findAllByAssignee(WwwUser u);
-    //public List<Task> findAllByStatus(Task.Status status);
+    public List<Task> findAllByStatus(Task.Status status);
 
+    public List<Task> findAllByCreatorAndStatus(WwwUser u, Task.Status status);
+    public List<Task> findAllByAssigneeAndStatus(WwwUser u, Task.Status status);
 
 }
