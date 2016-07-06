@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +72,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public void addTask(Task t) {
         TaskEntity te = new TaskEntity();
         BeanUtils.copyProperties(t,te);
@@ -78,12 +80,15 @@ public class TaskServiceImpl implements TaskService {
         BeanUtils.copyProperties(te,t);
     }
 
+    @Transactional(readOnly = true)
     public void updateTask(Task t) {
         TaskEntity te = new TaskEntity();
         BeanUtils.copyProperties(t,te);
         taskRepository.updateTask(te);
         BeanUtils.copyProperties(te,t);
     }
+
+    @Transactional(readOnly = true)
     public Task find(Integer id) {
         TaskEntity te =  taskRepository.find(id);
         Task t = new Task();
@@ -91,11 +96,14 @@ public class TaskServiceImpl implements TaskService {
         return t;
     }
 
+    @Transactional(readOnly = true)
     public Task remove(Task t) {
         TaskEntity te = taskRepository.remove(t.getId());
         BeanUtils.copyProperties(te,t);
         return t;
     }
+
+    @Transactional(readOnly = true)
     public List<Task> findAll() {
 
         List <TaskEntity> list = taskRepository.findAll();
@@ -108,6 +116,7 @@ public class TaskServiceImpl implements TaskService {
     // Do we even need the thing?
     //public List<Task> findAllByLocation(Location l);
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByCategory(Category c) {
 
         CategoryEntity ce = categoryRepository.find(c.getId());
@@ -116,6 +125,8 @@ public class TaskServiceImpl implements TaskService {
 
         return tasks;
     }
+
+    @Transactional(readOnly = true)
     public List<Task> findAllByCreator(WwwUser u) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -124,6 +135,8 @@ public class TaskServiceImpl implements TaskService {
 
         return tasks;
     }
+
+    @Transactional(readOnly = true)
     public List<Task> findAllByAssignee(WwwUser u) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -133,6 +146,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByPriority(Integer p) {
 
         List <TaskEntity> list = taskRepository.findAllByPriority(p);
@@ -141,6 +155,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByFamily(WwwFamily f) {
 
         FamilyEntity fe = familyRepository.findFamily((int)(long)(f.getId()));
@@ -150,6 +165,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByPrivacy(Boolean p) {
 
         List <TaskEntity> list = taskRepository.findAllByPrivacy(p);
@@ -158,6 +174,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByStatus(Task.Status status) {
 
         TaskEntity.Status s1 = getStatus(status);
@@ -167,6 +184,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByDueDate(DateTime start, DateTime end) {
 
         List <TaskEntity> list = taskRepository.findAllByDueDate(start, end);
@@ -177,6 +195,7 @@ public class TaskServiceImpl implements TaskService {
 
     // Find all bt two fields:
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByCreatorAndPrivacy(WwwUser u, Boolean p) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -186,6 +205,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByAssigneeAndPrivacy(WwwUser u, Boolean p) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -195,6 +215,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByCreatorAndStatus(WwwUser u, Task.Status status) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -205,6 +226,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByAssigneeAndStatus(WwwUser u, Task.Status status) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -215,6 +237,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByFamilyAndCategory(WwwFamily f, Category c) {
 
         FamilyEntity fe = familyRepository.findFamily((int)(long)(f.getId()));
@@ -225,6 +248,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByCreatorAndCategory(WwwUser u, Category c) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -235,6 +259,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByAssigneeAndCategory(WwwUser u, Category c) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -245,6 +270,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByCreatorAndDueDate(WwwUser u, DateTime start, DateTime end) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -253,6 +279,8 @@ public class TaskServiceImpl implements TaskService {
 
         return tasks;
     }
+
+    @Transactional(readOnly = true)
     public List<Task> findAllByAssigneeAndDueDate(WwwUser u, DateTime start, DateTime end) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -264,6 +292,7 @@ public class TaskServiceImpl implements TaskService {
 
     // Find all by three parameters
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByCreatorAndCategoryAndStatus(WwwUser u, Category c, Task.Status s) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -275,6 +304,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByAssigneeAndCategoryAndStatus(WwwUser u, Category c, Task.Status s) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -286,6 +316,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByCreatorAndStatusAndPrivacy(WwwUser u, Task.Status s, Boolean p) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -296,6 +327,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByAssigneeAndStatusAndPrivacy(WwwUser u, Task.Status s, Boolean p) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -306,6 +338,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByFamilyAndCategoryAndPrivacy(WwwFamily f, Category c, Boolean p) {
 
         FamilyEntity fe = familyRepository.findFamily((int)(long)(f.getId()));
@@ -316,6 +349,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByCreatorAndCategoryAndPrivacy(WwwUser u, Category c, Boolean p) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -326,6 +360,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByAssigneeAndCategoryAndPrivacy(WwwUser u, Category c, Boolean p) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -338,6 +373,7 @@ public class TaskServiceImpl implements TaskService {
 
     // Find all by four parameters
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByCreatorAndCategoryAndStatusAndPrivacy(WwwUser u, Category c, Task.Status s, Boolean p) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
@@ -349,6 +385,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAllByAssigneeAndCategoryAndStatusAndPrivacy(WwwUser u, Category c, Task.Status s, Boolean p) {
 
         UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
