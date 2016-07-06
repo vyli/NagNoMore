@@ -1,6 +1,7 @@
 package edu.uta.sis.nagnomore.data.repository;
 
 import edu.uta.sis.nagnomore.data.entities.*;
+import org.joda.time.DateTime;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public interface TaskRepository {
     public List<TaskEntity> findAllByStatus(TaskEntity.Status status);
     public List<TaskEntity> findAllByFamily(FamilyEntity fe);
     public List<TaskEntity> findAllByPrivacy(Boolean b);
+    public List<TaskEntity> findAllByDueDate(DateTime start, DateTime end);
 
     // Find all by two fields
 
@@ -35,6 +37,8 @@ public interface TaskRepository {
     public List<TaskEntity> findAllByFamilyAndCategory(FamilyEntity fe, CategoryEntity ce);
     public List<TaskEntity> findAllByCreatorAndCategory(UserEntity ue, CategoryEntity ce);
     public List<TaskEntity> findAllByAssigneeAndCategory(UserEntity ue, CategoryEntity ce);
+    public List<TaskEntity> findAllByCreatorAndDueDate(UserEntity ue, DateTime start, DateTime end);
+    public List<TaskEntity> findAllByAssigneeAndDueDate(UserEntity ue, DateTime start, DateTime end);
 
     // Find all by three fields
 
@@ -50,4 +54,5 @@ public interface TaskRepository {
 
     public List<TaskEntity> findAllByCreatorAndCategoryAndStatusAndPrivacy(UserEntity ue, CategoryEntity ce, TaskEntity.Status status, Boolean p);
     public List<TaskEntity> findAllByAssigneeAndCategoryAndStatusAndPrivacy(UserEntity ue, CategoryEntity ce, TaskEntity.Status status, Boolean p);
+
 }

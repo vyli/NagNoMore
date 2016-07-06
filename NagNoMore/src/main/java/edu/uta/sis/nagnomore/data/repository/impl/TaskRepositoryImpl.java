@@ -2,13 +2,16 @@ package edu.uta.sis.nagnomore.data.repository.impl;
 
 import edu.uta.sis.nagnomore.data.entities.*;
 import edu.uta.sis.nagnomore.data.repository.TaskRepository;
+import org.joda.time.DateTime;
 import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -105,6 +108,19 @@ public class TaskRepositoryImpl implements TaskRepository {
                 .getResultList();
     }
 
+
+    public List<TaskEntity> findAllByDueDate(DateTime start, DateTime end) {
+        try {
+            return em.createQuery("From TaskEntity t WHERE t.start >= :start AND t.end <= :end", TaskEntity.class)
+                    .setParameter("start", start)
+                    .setParameter("end", end)
+                    .getResultList();
+        } catch (NoResultException nre) {
+            /* no-op */
+            return new ArrayList<TaskEntity>();
+        }
+    }
+
     // *************************** Search by two fields:
     //**************************************************
 
@@ -162,6 +178,32 @@ public class TaskRepositoryImpl implements TaskRepository {
                 .setParameter("fe", fe)
                 .setParameter("ce", ce)
                 .getResultList();
+    }
+
+    public List<TaskEntity> findAllByCreatorAndDueDate(UserEntity ue, DateTime start, DateTime end) {
+        try {
+            return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND (t.start >= :start AND t.end <= :end)", TaskEntity.class)
+                    .setParameter("ue", ue)
+                    .setParameter("start", start)
+                    .setParameter("end", end)
+                    .getResultList();
+
+        } catch (NoResultException nre) {
+            return new ArrayList<TaskEntity>();
+        }
+    }
+
+    public List<TaskEntity> findAllByAssigneeAndDueDate(UserEntity ue, DateTime start, DateTime end) {
+        try {
+            return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND (t.start >= :start AND t.end <= :end)", TaskEntity.class)
+                    .setParameter("ue", ue)
+                    .setParameter("start", start)
+                    .setParameter("end", end)
+                    .getResultList();
+
+        } catch (NoResultException nre) {
+            return new ArrayList<TaskEntity>();
+        }
     }
 
     // *************************** Search by three fields:
