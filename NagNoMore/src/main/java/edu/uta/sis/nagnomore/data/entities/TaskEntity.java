@@ -53,7 +53,7 @@ public class TaskEntity {
     @ManyToOne
     UserEntity assignee;
 
-    @ManyToOne()
+    @ManyToOne
     LocationEntity location;
 
     public enum Status {

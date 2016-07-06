@@ -98,6 +98,32 @@ public class TaskRepositoryImpl implements TaskRepository {
                 .getResultList();
     }
 
+    public List<TaskEntity> findAllByPrivacy(Boolean p) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.privacy=:p", TaskEntity.class)
+                .setParameter("p", p)
+                .getResultList();
+    }
+
+    // *************************** Search by two fields:
+    //**************************************************
+
+    public List<TaskEntity> findAllByCreatorAndPrivacy(UserEntity ue, Boolean p) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND t.privacy=:p", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("p", p)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByAssigneeAndPrivacy(UserEntity ue, Boolean p) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND t.privacy=:p", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("p", p)
+                .getResultList();
+    }
+
     public List<TaskEntity> findAllByCreatorAndStatus(UserEntity ue, TaskEntity.Status s) {
 
         return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND t.status=:s", TaskEntity.class)
@@ -138,6 +164,9 @@ public class TaskRepositoryImpl implements TaskRepository {
                 .getResultList();
     }
 
+    // *************************** Search by three fields:
+    //***************************************************
+
     public List<TaskEntity> findAllByCreatorAndCategoryAndStatus(UserEntity ue, CategoryEntity ce, TaskEntity.Status s) {
 
         return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND t.category=:ce AND t.status=:s", TaskEntity.class)
@@ -155,4 +184,73 @@ public class TaskRepositoryImpl implements TaskRepository {
                 .setParameter("s", s)
                 .getResultList();
     }
+
+    public List<TaskEntity> findAllByCreatorAndStatusAndPrivacy(UserEntity ue, TaskEntity.Status s, Boolean p) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND t.status=:s AND t.privacy=:p", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("s", s)
+                .setParameter("p", p)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByAssigneeAndStatusAndPrivacy(UserEntity ue, TaskEntity.Status s, Boolean p) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND t.status=:s AND t.privacy=:p", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("s", s)
+                .setParameter("p",p)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByCreatorAndCategoryAndPrivacy(UserEntity ue, CategoryEntity ce, Boolean p) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND t.category=:ce AND t.privacy=:p", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("ce", ce)
+                .setParameter("p",p)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByAssigneeAndCategoryAndPrivacy(UserEntity ue, CategoryEntity ce, Boolean p) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND t.category=:ce AND t.privacy=:p", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("ce", ce)
+                .setParameter("p",p)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByFamilyAndCategoryAndPrivacy(FamilyEntity fe, CategoryEntity ce, Boolean p) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.family=:fe AND t.category=:ce", TaskEntity.class)
+                .setParameter("fe", fe)
+                .setParameter("ce", ce)
+                .setParameter("p",p)
+                .getResultList();
+    }
+
+    // *************************** Search by four fields:
+    //***************************************************
+
+    public List<TaskEntity> findAllByCreatorAndCategoryAndStatusAndPrivacy(UserEntity ue, CategoryEntity ce, TaskEntity.Status s, Boolean p) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND t.category=:ce AND t.status=:s AND t.privacy=:p", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("ce", ce)
+                .setParameter("s", s)
+                .setParameter("p", p)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllByAssigneeAndCategoryAndStatusAndPrivacy(UserEntity ue, CategoryEntity ce, TaskEntity.Status s, Boolean p) {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND t.category=:ce AND t.status=:s AND t.privacy=:p", TaskEntity.class)
+                .setParameter("ue", ue)
+                .setParameter("ce", ce)
+                .setParameter("s", s)
+                .setParameter("p", p)
+                .getResultList();
+    }
+
 }
