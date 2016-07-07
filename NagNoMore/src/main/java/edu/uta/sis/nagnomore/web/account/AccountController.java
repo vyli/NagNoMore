@@ -2,6 +2,7 @@ package edu.uta.sis.nagnomore.web.account;
 
 
 import edu.uta.sis.nagnomore.domain.data.WwwUser;
+import edu.uta.sis.nagnomore.domain.service.FamilyService;
 import edu.uta.sis.nagnomore.domain.service.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,23 @@ public class AccountController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    FamilyService familyService;
 
     @RequestMapping(value = "/account/register", method = RequestMethod.GET)
     public String register(Model model) {
         model.addAttribute("user", new WwwUser());
         return "/account/register";
+    }
+
+    @RequestMapping(value = "/members/{id}", method = RequestMethod.GET)
+    public String listFamilyMembers(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getFamily().getId().longValue() == id.longValue()) {
+            model.addAttribute("users", userService.getUsersByFamily(familyService.findFamily(id.intValue())));
+            return "/account/list";
+        } else {
+            throw new AccessDeniedException("not.allowed");
+        }
     }
 
     @RequestMapping(value = "/account/show/{id}", method = RequestMethod.GET)
