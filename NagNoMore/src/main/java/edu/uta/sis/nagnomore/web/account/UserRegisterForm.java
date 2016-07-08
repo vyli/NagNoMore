@@ -11,6 +11,7 @@ public class UserRegisterForm {
     String role;
     String fullName;
     String phoneNumber;
+    String family;
 
     public String getUsername() {
         return username;
@@ -58,5 +59,13 @@ public class UserRegisterForm {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getFamily() {
+        return family;
+    }
+
+    public void setFamily(String family) {
+        this.family = family;
     }
 }
