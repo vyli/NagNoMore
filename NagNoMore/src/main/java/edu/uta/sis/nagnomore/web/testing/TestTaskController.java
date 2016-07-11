@@ -4,9 +4,14 @@ import edu.uta.sis.nagnomore.data.entities.FamilyEntity;
 import edu.uta.sis.nagnomore.data.entities.UserEntity;
 import edu.uta.sis.nagnomore.data.repository.FamilyRepository;
 import edu.uta.sis.nagnomore.data.repository.UserRepository;
+import edu.uta.sis.nagnomore.domain.data.Category;
 import edu.uta.sis.nagnomore.domain.data.Task;
+import edu.uta.sis.nagnomore.domain.data.WwwFamily;
+import edu.uta.sis.nagnomore.domain.data.WwwUser;
 import edu.uta.sis.nagnomore.domain.service.CategoryService;
+import edu.uta.sis.nagnomore.domain.service.FamilyService;
 import edu.uta.sis.nagnomore.domain.service.TaskService;
+import edu.uta.sis.nagnomore.domain.service.UserService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,10 +32,14 @@ public class TestTaskController {
     CategoryService cs;
 
     @Autowired
-    UserRepository ur;
+    FamilyService fs;
 
     @Autowired
-    FamilyRepository fr;
+    UserService us;
+
+    @Autowired
+    UserRepository ur;
+
 
     @Autowired
     TestCategoryController tcc;
@@ -41,28 +50,42 @@ public class TestTaskController {
         System.out.println("Starting task testing.");
 
         // We need at least 1 family for this test
-        FamilyEntity fe = new FamilyEntity();
-        fe.setFamilyName("TestFamily123");
-        fr.addFamily(fe);
+        WwwFamily f = new WwwFamily();
+        f.setFamilyName("TestFamily123");
+        fs.addFamily(f);
 
         // We need two users on same family for this test
-        UserEntity ue1 = new UserEntity();
-        ue1.setUsername("Test User Child");
-        ue1.setRole("ROLE_CHILD");
-        ue1.setFamily(fe);
-        ur.create(ue1);
+        WwwUser u1 = new WwwUser((long)4000, "Raimo", "12345", "raipe@huu.haa", "Raimo Rujo",  "123456789", "ROLE_ANONYMOUS", true);
+        //u1.setRole("ROLE_CHILD");
+        u1.setFamily(f);
+        us.create(u1);
 
-        UserEntity ue2 = new UserEntity();
-        ue2.setUsername("Test User Parent");
-        ue2.setRole("ROLE_PARENT");
-        ue2.setFamily(fe);
-        ur.create(ue2);
+
+        WwwUser u2 = new WwwUser((long)4001, "Ulla", "12345", "ulla@huu.haa", "Ulla Rujo",  "123456789", "ROLE_ANONYMOUS", true);;
+        u2.setUsername("Test User Parent");
+        //u2.setRole("ROLE_PARENT");
+        u2.setFamily(f);
+        us.create(u2);
 
         //Empty the Category-table
         tcc.test2();
         // Create 3 test categories
         tcc.test1();
 
+        DateTime dt = DateTime.now();
+        DateTime due = dt.plusWeeks(2);
+
+        List<Category> catlist = cs.getCategories();
+        Category cat = catlist.get(1);
+
+        this.createTestTask(
+                "Test task 1",
+                "This is a task created by TestTaskController",
+                dt, due, 0, false, true, cat, u1, u2, Task.Status.COMPLETED
+
+        );
+
+        /*
         Task t = new Task();
         t.setTitle("Title: Test Task number 1");
         t.setDescription("Desc: Test Description number 1");
@@ -80,6 +103,7 @@ public class TestTaskController {
         t.setStatus(status);
 
         taskService.addTask(t);
+        */
 
         return "/home";
     }
@@ -107,6 +131,30 @@ public class TestTaskController {
     public String test3() {
 
         return "/home";
+    }
+
+    private void createTestTask(String title, String description,
+                                DateTime created, DateTime due,
+                                int priority, Boolean privacy,
+                                Boolean alarm, Category category,
+                                WwwUser creator, WwwUser assignee,
+                                Task.Status status
+                                 ) {
+
+        Task t = new Task();
+        t.setTitle(title);
+        t.setDescription(description);
+        t.setCreated(created);
+        t.setDue(due);
+        t.setPriority(priority);
+        t.setPrivacy(privacy);
+        t.setAlarm(alarm);
+        t.setCategory(category);
+        t.setCreator(creator);
+        t.setAssignee(assignee);
+        t.setStatus(status);
+
+        taskService.addTask(t);
     }
 
 }

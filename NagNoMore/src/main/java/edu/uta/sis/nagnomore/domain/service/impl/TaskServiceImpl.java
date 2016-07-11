@@ -72,7 +72,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public void addTask(Task t) {
         TaskEntity te = new TaskEntity();
         BeanUtils.copyProperties(t,te);
@@ -80,7 +80,7 @@ public class TaskServiceImpl implements TaskService {
         BeanUtils.copyProperties(te,t);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public void updateTask(Task t) {
         TaskEntity te = new TaskEntity();
         BeanUtils.copyProperties(t,te);
@@ -96,7 +96,7 @@ public class TaskServiceImpl implements TaskService {
         return t;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public Task remove(Task t) {
         TaskEntity te = taskRepository.remove(t.getId());
         BeanUtils.copyProperties(te,t);

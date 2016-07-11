@@ -38,9 +38,9 @@ public class Task {
 
     String family;
 
-    String creator;
+    WwwUser creator;
 
-    String assignee;
+    WwwUser assignee;
 
     String location;
 
@@ -132,19 +132,19 @@ public class Task {
         this.alarm = alarm;
     }
 
-    public String getCreator() {
+    public WwwUser getCreator() {
         return creator;
     }
 
-    public void setCreator(String creator) {
+    public void setCreator(WwwUser creator) {
         this.creator = creator;
     }
 
-    public String getAssignee() {
+    public WwwUser getAssignee() {
         return assignee;
     }
 
-    public void setAssignee(String assignee) {
+    public void setAssignee(WwwUser assignee) {
         this.assignee = assignee;
     }
 
