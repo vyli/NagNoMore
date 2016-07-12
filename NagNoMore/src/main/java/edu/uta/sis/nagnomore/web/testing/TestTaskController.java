@@ -82,7 +82,7 @@ public class TestTaskController {
         this.createTestTask(
                 "Test task 1",
                 "This is a task created by TestTaskController",
-                dt, due, 0, false, true, cat, u1, u2, Task.Status.COMPLETED
+                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.COMPLETED
 
         );
 
@@ -144,7 +144,7 @@ public class TestTaskController {
                                 int priority, Boolean privacy,
                                 Boolean alarm, Category category,
                                 WwwUser creator, WwwUser assignee,
-                                Task.Status status
+                                WwwFamily family, Task.Status status
                                  ) {
 
         Task t = new Task();
@@ -159,6 +159,7 @@ public class TestTaskController {
         t.setCreator(creator);
         t.setAssignee(assignee);
         t.setStatus(status);
+        t.setFamily(family);
 
         taskService.addTask(t);
     }
