@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Table(name= "categories")
 public class CategoryEntity {
 
-    @Column
     @Id
     @GeneratedValue
     Integer id;

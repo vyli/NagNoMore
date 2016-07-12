@@ -36,7 +36,7 @@ public class Task {
 
     Category category;
 
-    String family;
+    WwwFamily family;
 
     WwwUser creator;
 
@@ -76,11 +76,11 @@ public class Task {
         this.category = category;
     }
 
-    public String getFamily() {
+    public WwwFamily getFamily() {
         return family;
     }
 
-    public void setFamily(String family) {
+    public void setFamily(WwwFamily family) {
         this.family = family;
     }
 

@@ -1,5 +1,6 @@
 package edu.uta.sis.nagnomore.data.entities;
 
+import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -47,10 +48,10 @@ public class TaskEntity {
     @ManyToOne
     FamilyEntity family;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     UserEntity creator;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     UserEntity assignee;
 
     @ManyToOne
@@ -162,4 +163,12 @@ public class TaskEntity {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    public CategoryEntity getCategory() {return category;}
+
+    public void setCategory(CategoryEntity category) {this.category = category;}
+
+    public FamilyEntity getFamily() {return family;}
+
+    public void setFamily(FamilyEntity family) {this.family = family;}
 }
