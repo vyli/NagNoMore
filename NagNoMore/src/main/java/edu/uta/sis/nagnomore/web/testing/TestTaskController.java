@@ -54,11 +54,6 @@ public class TestTaskController {
         f.setFamilyName("TestFamily123");
         fs.addFamily(f);
 
-        // Get family from database, otherwise we won't have a family ID to work with
-        // On first run, fails to find the family from the DB
-        // On second run it fails because there's more than one family with the same name.
-        f = fs.findFamilyByName("TestFamily123");
-
         // We need two users on same family for this test
         // Pass null for id; it's automatically generated
         WwwUser u1 = new WwwUser(null, "Raimo", "12345", "raipe@huu.haa", "Raimo Rujo",  "123456789", "ROLE_CHILD", true);
@@ -68,7 +63,7 @@ public class TestTaskController {
 
 
         WwwUser u2 = new WwwUser(null, "Ulla", "12345", "ulla@huu.haa", "Ulla Rujo",  "123456789", "ROLE_PARENT", true);
-        u2.setUsername("Test User Parent");
+        //u2.setUsername("Test User Parent");
         //u2.setRole("ROLE_PARENT");
         u2.setFamily(f);
         us.create(u2);
@@ -112,9 +107,9 @@ public class TestTaskController {
         */
 
         // Cleanup
-        us.remove(us.getUserByUsername("Ulla").getId());
-        us.remove(us.getUserByUsername("Raimo").getId());
-        fs.removeFamily(fs.findFamilyByName("TestFamily123").getId());
+        //us.remove(u1.getId());
+        //us.remove(u2.getId());
+        //fs.removeFamily(f.getId());
 
         return "/home";
     }

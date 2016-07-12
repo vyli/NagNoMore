@@ -26,6 +26,7 @@ public class FamilyServiceImpl implements FamilyService {
         FamilyEntity fe = new FamilyEntity();
         BeanUtils.copyProperties(f,fe);
         familyRepository.addFamily(fe);
+        BeanUtils.copyProperties(fe, f);
     }
 
     @Transactional(readOnly = false)
