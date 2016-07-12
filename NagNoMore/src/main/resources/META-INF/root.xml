@@ -115,6 +115,8 @@
         <security:intercept-url pattern="/loggedin"  access="permitAll"/>
         <security:intercept-url pattern="/loggedout"  access="permitAll"/>
         <security:intercept-url pattern="/loginerr"  access="permitAll"/>
+        <security:intercept-url pattern="/test/*"  access="permitAll"/>
+
 
 
         <security:intercept-url pattern="/**" access="isFullyAuthenticated()" />
