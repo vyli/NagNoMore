@@ -106,7 +106,29 @@ public class TaskServiceImpl implements TaskService {
     public void updateTask(Task t) {
         TaskEntity te = new TaskEntity();
         BeanUtils.copyProperties(t,te);
+
+        CategoryEntity ce = new CategoryEntity();
+        Category c = t.getCategory();
+        BeanUtils.copyProperties(c, ce);
+        te.setCategory(ce);
+
+        if (t.getFamily() != null) {
+            FamilyEntity fe = familyRepository.findFamily(t.getFamily().getId());
+            te.setFamily(fe);
+        }
+
+        UserEntity ue = userRepository.getUserById(t.getCreator().getId().intValue());
+        te.setCreator(ue);
+
+        UserEntity ue2 = userRepository.getUserById(t.getAssignee().getId().intValue());
+        te.setAssignee(ue2);
+
+        Task.Status ts = t.getStatus();
+        TaskEntity.Status tes  = getStatus(ts);
+        te.setStatus(tes);
+
         taskRepository.updateTask(te);
+
         BeanUtils.copyProperties(te,t);
     }
 

@@ -19,7 +19,7 @@ public class TestCategoryController {
     @Autowired
     CategoryService categoryService;
 
-    @RequestMapping("/catadd")
+    @RequestMapping("/test/catadd")
     public String test1() {
 
         System.out.println("Starting category testing.");
@@ -44,7 +44,7 @@ public class TestCategoryController {
         return "/home";
     }
 
-    @RequestMapping("/catempty")
+    @RequestMapping("/test/catempty")
     public String test2() {
 
         List<Category> catlist = categoryService.getCategories(); // This tests getCategories()
@@ -62,7 +62,7 @@ public class TestCategoryController {
         return "/home";
     }
 
-    @RequestMapping("/catupdate")
+    @RequestMapping("/test/catupdate")
     public String test3() {
 
         // Empty table

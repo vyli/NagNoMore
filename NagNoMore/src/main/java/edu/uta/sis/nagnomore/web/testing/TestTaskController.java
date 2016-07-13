@@ -44,7 +44,7 @@ public class TestTaskController {
     @Autowired
     TestCategoryController tcc;
 
-    @RequestMapping("/taskadd")
+    @RequestMapping("/test/taskadd")
     public String taskadd() {
 
         System.out.println("Starting task testing.");
@@ -57,14 +57,9 @@ public class TestTaskController {
         // We need two users on same family for this test
         // Pass null for id; it's automatically generated
         WwwUser u1 = new WwwUser(null, "Raimo", "12345", "raipe@huu.haa", "Raimo Rujo",  "123456789", "ROLE_CHILD", true);
-        //u1.setRole("ROLE_CHILD");
         u1.setFamily(f);
         us.create(u1);
-
-
         WwwUser u2 = new WwwUser(null, "Ulla", "12345", "ulla@huu.haa", "Ulla Rujo",  "123456789", "ROLE_PARENT", true);
-        //u2.setUsername("Test User Parent");
-        //u2.setRole("ROLE_PARENT");
         u2.setFamily(f);
         us.create(u2);
 
@@ -79,10 +74,24 @@ public class TestTaskController {
         List<Category> catlist = cs.getCategories();
         Category cat = catlist.get(1);
 
+        // Modify = false
         this.createTestTask(
                 "Test task 1",
                 "This is a task created by TestTaskController",
-                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.COMPLETED
+                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.COMPLETED, false
+
+        );
+
+        System.out.println("Set breakpoint here to use phpMyAdmin to check DB before Task update.");
+
+        // Change Category, Status, Title and Description
+        cat = catlist.get(0);
+
+        // Modify = true
+        this.createTestTask(
+                "Test task modified",
+                "This is a task created and modified by TestTaskController",
+                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.NEEDS_ACTION, true
 
         );
 
@@ -91,13 +100,7 @@ public class TestTaskController {
         // Cleanup
 
         // Remove all tasks
-        List<Task> tlist = taskService.findAll();
-        for(int i=0; i<tlist.size();i++){
-            taskService.remove(tlist.get(i));
-        }
-
-        long id1 = u1.getId();
-        long id2 = u2.getId();
+        taskempty();
 
         // Remove users created for this test
         if(u1 != null) {
@@ -115,7 +118,7 @@ public class TestTaskController {
         return "/home";
     }
 
-    @RequestMapping("/taskempty")
+    @RequestMapping("/test/taskempty")
     public String taskempty() {
 
         List<Task> tasklist = taskService.findAll(); // This tests findAll()
@@ -124,18 +127,17 @@ public class TestTaskController {
 
         System.out.println("Removing " + size + " entries from Task table.");
 
-        if(size>0) {
 
-            for(int i=0; i<size; i++) {
-                taskService.remove(tasklist.get(i)); // This tests remove()
-                System.out.println("Removing: " + i);
-            }
+        for(int i=0; i<size; i++) {
+            taskService.remove(tasklist.get(i)); // This tests remove()
+            System.out.println("Removing: " + i);
         }
         return "/home";
     }
 
-    @RequestMapping("/task3")
-    public String test3() {
+
+    @RequestMapping("/task4")
+    public String test4() {
 
         return "/home";
     }
@@ -145,10 +147,18 @@ public class TestTaskController {
                                 int priority, Boolean privacy,
                                 Boolean alarm, Category category,
                                 WwwUser creator, WwwUser assignee,
-                                WwwFamily family, Task.Status status
+                                WwwFamily family, Task.Status status,
+                                Boolean modify
                                  ) {
 
-        Task t = new Task();
+        Task t = null;
+        if(modify) {
+            List<Task> tasklist = taskService.findAll();
+            t = tasklist.get(0);
+        }
+        else
+            t = new Task();
+
         t.setTitle(title);
         t.setDescription(description);
         t.setCreated(created);
@@ -162,7 +172,10 @@ public class TestTaskController {
         t.setStatus(status);
         t.setFamily(family);
 
-        taskService.addTask(t);
+        if(!modify)
+            taskService.addTask(t);
+        else
+            taskService.updateTask(t);
     }
 
 }
