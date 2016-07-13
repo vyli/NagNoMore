@@ -111,7 +111,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     public List<TaskEntity> findAllByDueDate(DateTime start, DateTime end) {
         try {
-            return em.createQuery("From TaskEntity t WHERE t.start >= :start AND t.end <= :end", TaskEntity.class)
+            return em.createQuery("From TaskEntity t WHERE t.due >= :start AND t.due <= :end", TaskEntity.class)
                     .setParameter("start", start)
                     .setParameter("end", end)
                     .getResultList();
