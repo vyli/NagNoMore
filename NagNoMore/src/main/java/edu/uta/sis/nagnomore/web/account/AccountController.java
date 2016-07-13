@@ -181,13 +181,16 @@ public class AccountController {
     public String update(@PathVariable("id") Long id, @ModelAttribute("form") UserRegisterForm form, Model model, @AuthenticationPrincipal WwwUser user) {
         // ONLY ROLE_ADMIN is ALLOWED TO UPDATE ANY USER
         if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getId().longValue() == id.longValue()) {
+            // public WwwUser update(Long id, String userName, String fullName, String password, String email, String phoneNumber, String role, WwwFamily family);
             WwwUser w2 = userService.update(
                     user.getId(),
+                    form.getUsername(),
                     form.getFullName(),
                     form.getEmail(),
                     form.getPassword(),
                     form.getPhoneNumber(),
-                    form.getRole()
+                    form.getRole(),
+                    null
             );
 
             try {
@@ -206,6 +209,7 @@ public class AccountController {
         }
     }
 
+    // Used for "old" site, new functions for registering/creating users are above
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
     public String create(@ModelAttribute("user") UserRegisterForm user, Model model) {
         // TODO @VALIDate
@@ -217,7 +221,7 @@ public class AccountController {
                         user.getEmail(),
                         user.getFullName(),
                         user.getPhoneNumber(),
-                        "ROLE_ELDER",
+                        "ROLE_ADMIN",
                         Boolean.TRUE));
 
         WwwUser u2 = userService.getUserByUsername(user.getUsername());
