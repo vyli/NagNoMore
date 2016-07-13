@@ -38,7 +38,9 @@ public interface UserService extends UserDetailsService {
 
     public void create(WwwUser u);
 
-    public WwwUser update(Long id, String name, String email, String pw, String phone, String role);
+    public WwwUser update(WwwUser wwwUser);
+
+    public WwwUser update(Long id, String userName, String fullName, String password, String email, String phoneNumber, String role, WwwFamily family);
 
     public void remove(Long id);
 }

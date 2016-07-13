@@ -136,15 +136,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(readOnly = false)
-    public WwwUser update(Long id, String name, String email, String pw, String phone, String role) {
+    public WwwUser update(WwwUser wwwUser) {
+        UserEntity user = userRepository.getUserById(wwwUser.getId().intValue());
+        user.setUsername(wwwUser.getUsername());
+        user.setFullName(wwwUser.getFullName());
+        user.setEmail(wwwUser.getEmail());
+        user.setPhoneNumber(wwwUser.getPhoneNumber());
+        user.setRole(wwwUser.getRole());
+        user.setPassword(wwwUser.getPassword());
+        user.setFamily(familyRepository.findFamily(wwwUser.getFamily().getId()));
+        userRepository.update(user);
+        WwwUser wwwUser2 = new WwwUser(user.getId().longValue(), user.getUsername(), user.getPassword(), user.getEmail(), user.getFullName(), user.getPhoneNumber(), user.getRole(), user.isEnabled());
+        return wwwUser2;
+    }
+
+    @Transactional(readOnly = false)
+    public WwwUser update(Long id, String userName, String fullName, String password, String email, String phoneNumber, String role, WwwFamily family) {
         UserEntity user = userRepository.getUserById(id.intValue());
-        user.setFullName(name);
+        user.setUsername(userName);
+        user.setFullName(fullName);
         user.setEmail(email);
-        user.setPhoneNumber(phone);
+        user.setPhoneNumber(phoneNumber);
         user.setRole(role);
-        if (!StringUtils.isEmpty(pw)) {
-            user.setPassword(pw);
+        if (!StringUtils.isEmpty(password)) {
+            user.setPassword(password);
         }
+        user.setFamily(familyRepository.findFamily(family.getId()));
         userRepository.update(user);
         WwwUser wwwUser = new WwwUser(id, user.getUsername(), user.getPassword(), user.getEmail(), user.getFullName(), user.getPhoneNumber(), user.getRole(), user.isEnabled());
         return wwwUser;

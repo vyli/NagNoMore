@@ -4,6 +4,10 @@ import edu.uta.sis.nagnomore.data.entities.FamilyEntity;
 import edu.uta.sis.nagnomore.data.entities.UserEntity;
 import edu.uta.sis.nagnomore.data.repository.FamilyRepository;
 import edu.uta.sis.nagnomore.data.repository.UserRepository;
+import edu.uta.sis.nagnomore.domain.data.WwwFamily;
+import edu.uta.sis.nagnomore.domain.data.WwwUser;
+import edu.uta.sis.nagnomore.domain.service.FamilyService;
+import edu.uta.sis.nagnomore.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -19,7 +23,53 @@ public class TestiaVil {
     @Autowired
     FamilyRepository fr;
 
-    @RequestMapping("/vtest")
+    @Autowired
+    FamilyService fs;
+
+    @Autowired
+    UserService us;
+
+    @RequestMapping("/test/v2")
+    public String test2(){
+
+        WwwFamily f = new WwwFamily();
+        f.setFamilyName("vTestFamily");
+        fs.addFamily(f);
+
+        WwwFamily f2 = new WwwFamily();
+        f2.setFamilyName("vTestFamily2");
+        fs.addFamily(f2);
+
+        //  public WwwUser(Long id, String username, String password, String email, String fullName, String phoneNumber, String role, Boolean enabled)
+        WwwUser u1 = new WwwUser(null, "Pekka", "salasana", "pekka@huu.haa", "Pekka Rujo",  "123456789", "ROLE_CHILD", true);
+        u1.setFamily(f);
+        us.create(u1);
+
+        // Change properties and try to update
+        u1.setFullName("Pekka Puupää");
+        u1.setPhoneNumber("040123123");
+        u1.setFamily(f2);
+        us.update(u1);
+
+        //  public WwwUser(Long id, String username, String password, String email, String fullName, String phoneNumber, String role, Boolean enabled)
+        WwwUser u2 = new WwwUser(null, "Ville", "salasana", "ville@huu.haa", "Ville Rujo",  "123456789", "ROLE_PARENT", true);
+        u2.setFamily(f);
+        us.create(u2);
+
+        // Try to update using the alternative method (password can be null)
+        // public WwwUser update(Long id, String userName, String fullName, String password, String email, String phoneNumber, String role, WwwFamily family);
+        us.update(u2.getId(), "Velho", "Ville Valo", null, "ville@huu.haa", "05000000", "ROLE_ELDER", f2);
+
+        // and clean up
+        us.remove(u1.getId());
+        us.remove(u2.getId());
+        fs.removeFamily(f.getId());
+        fs.removeFamily(f2.getId());
+
+        return "/home";
+    }
+
+    @RequestMapping("/test/v")
     public String test(){
 
         // Create family
