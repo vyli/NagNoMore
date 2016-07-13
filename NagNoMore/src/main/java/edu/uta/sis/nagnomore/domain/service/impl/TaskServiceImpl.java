@@ -82,15 +82,6 @@ public class TaskServiceImpl implements TaskService {
         BeanUtils.copyProperties(c, ce);
         te.setCategory(ce);
 
-        /*
-        FamilyEntity fe = new FamilyEntity();
-        WwwFamily f = t.getFamily();
-        if(f != null) {
-            BeanUtils.copyProperties(f, fe);
-            te.setFamily(fe);
-        }
-        */
-
         if (t.getFamily() != null) {
             FamilyEntity fe = familyRepository.findFamily(t.getFamily().getId());
             te.setFamily(fe);

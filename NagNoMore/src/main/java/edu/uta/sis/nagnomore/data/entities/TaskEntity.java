@@ -48,10 +48,10 @@ public class TaskEntity {
     @ManyToOne
     FamilyEntity family;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     UserEntity creator;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     UserEntity assignee;
 
     @ManyToOne

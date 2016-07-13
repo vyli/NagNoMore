@@ -86,30 +86,31 @@ public class TestTaskController {
 
         );
 
-        /*
-        Task t = new Task();
-        t.setTitle("Title: Test Task number 1");
-        t.setDescription("Desc: Test Description number 1");
-        DateTime dt = DateTime.now();
-        t.setCreated(dt);
-        DateTime due = dt.plusWeeks(2);
-        t.setDue(due);
-        t.setPriority(1);
-        t.setPrivacy(false);
-        t.setAlarm(false);
-        t.setCategory(cs.get(1));
-        t.setCreator(ue2.getFullName());
-        t.setAssignee(ue1.getFullName());
-        Task.Status status = Task.Status.COMPLETED;
-        t.setStatus(status);
-
-        taskService.addTask(t);
-        */
+        System.out.println("Set breakpoint here to use phpMyAdmin to check DB before cleanup.");
 
         // Cleanup
-        //us.remove(u1.getId());
-        //us.remove(u2.getId());
-        //fs.removeFamily(f.getId());
+
+        // Remove all tasks
+        List<Task> tlist = taskService.findAll();
+        for(int i=0; i<tlist.size();i++){
+            taskService.remove(tlist.get(i));
+        }
+
+        long id1 = u1.getId();
+        long id2 = u2.getId();
+
+        // Remove users created for this test
+        if(u1 != null) {
+            us.remove(u1.getId());
+        }
+        if(u2 != null) {
+            us.remove(u2.getId());
+        }
+
+        //Remove Families created for this test
+        if(f != null) {
+            fs.removeFamily(f.getId());
+        }
 
         return "/home";
     }
