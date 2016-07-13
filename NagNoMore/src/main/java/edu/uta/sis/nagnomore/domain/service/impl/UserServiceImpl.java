@@ -161,7 +161,9 @@ public class UserServiceImpl implements UserService {
         if (!StringUtils.isEmpty(password)) {
             user.setPassword(password);
         }
-        user.setFamily(familyRepository.findFamily(family.getId()));
+        if (family != null) {
+            user.setFamily(familyRepository.findFamily(family.getId()));
+        }
         userRepository.update(user);
         WwwUser wwwUser = new WwwUser(id, user.getUsername(), user.getPassword(), user.getEmail(), user.getFullName(), user.getPhoneNumber(), user.getRole(), user.isEnabled());
         return wwwUser;
