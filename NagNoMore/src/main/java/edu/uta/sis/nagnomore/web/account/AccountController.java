@@ -37,56 +37,6 @@ public class AccountController {
     @Autowired
     FamilyService familyService;
 
-    @RequestMapping(value = "/account/register", method = RequestMethod.GET)
-    public String register(Model model) {
-        model.addAttribute("user", new WwwUser());
-        return "/account/register";
-    }
-
-    // List all members of family, limited to family members and admins
-    @RequestMapping(value = "/members/{id}", method = RequestMethod.GET)
-    public String listFamilyMembers(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
-        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getFamily().getId().longValue() == id.longValue()) {
-            model.addAttribute("users", userService.getUsersByFamily(familyService.findFamily(id.intValue())));
-            return "/account/list";
-        } else {
-            throw new AccessDeniedException("not.allowed");
-        }
-    }
-
-    // List elders of family, limited to family members and admins
-    @RequestMapping(value = "/elders/{id}", method = RequestMethod.GET)
-    public String listFamilyElders(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
-        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getFamily().getId().longValue() == id.longValue()) {
-            model.addAttribute("users", userService.getEldersByFamily(familyService.findFamily(id.intValue())));
-            return "/account/list";
-        } else {
-            throw new AccessDeniedException("not.allowed");
-        }
-    }
-
-    // List parents of family, limited to family members and admins
-    @RequestMapping(value = "/parents/{id}", method = RequestMethod.GET)
-    public String listFamilyParents(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
-        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getFamily().getId().longValue() == id.longValue()) {
-            model.addAttribute("users", userService.getParentsByFamily(familyService.findFamily(id.intValue())));
-            return "/account/list";
-        } else {
-            throw new AccessDeniedException("not.allowed");
-        }
-    }
-
-    // List children of family, limited to family members and admins
-    @RequestMapping(value = "/children/{id}", method = RequestMethod.GET)
-    public String listFamilyChildren(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
-        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getFamily().getId().longValue() == id.longValue()) {
-            model.addAttribute("users", userService.getChildrenByFamily(familyService.findFamily(id.intValue())));
-            return "/account/list";
-        } else {
-            throw new AccessDeniedException("not.allowed");
-        }
-    }
-
     // First time registration, role is elder by default. Create a family in the process
     @RequestMapping(value = "/account/registeruser", method = RequestMethod.POST)
     public String register(@ModelAttribute("user") UserRegisterForm user, Model model) {
@@ -165,6 +115,50 @@ public class AccountController {
         return "/account/list";
     }
 
+    // List all members of family, limited to family members and admins
+    @RequestMapping(value = "/members/{id}", method = RequestMethod.GET)
+    public String listFamilyMembers(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getFamily().getId().longValue() == id.longValue()) {
+            model.addAttribute("users", userService.getUsersByFamily(familyService.findFamily(id.intValue())));
+            return "/account/list";
+        } else {
+            throw new AccessDeniedException("not.allowed");
+        }
+    }
+
+    // List elders of family, limited to family members and admins
+    @RequestMapping(value = "/elders/{id}", method = RequestMethod.GET)
+    public String listFamilyElders(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getFamily().getId().longValue() == id.longValue()) {
+            model.addAttribute("users", userService.getEldersByFamily(familyService.findFamily(id.intValue())));
+            return "/account/list";
+        } else {
+            throw new AccessDeniedException("not.allowed");
+        }
+    }
+
+    // List parents of family, limited to family members and admins
+    @RequestMapping(value = "/parents/{id}", method = RequestMethod.GET)
+    public String listFamilyParents(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getFamily().getId().longValue() == id.longValue()) {
+            model.addAttribute("users", userService.getParentsByFamily(familyService.findFamily(id.intValue())));
+            return "/account/list";
+        } else {
+            throw new AccessDeniedException("not.allowed");
+        }
+    }
+
+    // List children of family, limited to family members and admins
+    @RequestMapping(value = "/children/{id}", method = RequestMethod.GET)
+    public String listFamilyChildren(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
+        if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getFamily().getId().longValue() == id.longValue()) {
+            model.addAttribute("users", userService.getChildrenByFamily(familyService.findFamily(id.intValue())));
+            return "/account/list";
+        } else {
+            throw new AccessDeniedException("not.allowed");
+        }
+    }
+
     @RequestMapping(value = "/account/update/{id}", method = RequestMethod.GET)
     public String update(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal WwwUser user) {
         if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || user.getId().longValue() == id.longValue()) {
@@ -209,27 +203,7 @@ public class AccountController {
         }
     }
 
-    // Used for "old" site, new functions for registering/creating users are above
-    @RequestMapping(value = "/account/create", method = RequestMethod.POST)
-    public String create(@ModelAttribute("user") UserRegisterForm user, Model model) {
-        // TODO @VALIDate
-        userService.create(
-                new WwwUser(
-                        null,
-                        user.getUsername(),
-                        user.getPassword(),
-                        user.getEmail(),
-                        user.getFullName(),
-                        user.getPhoneNumber(),
-                        "ROLE_ADMIN",
-                        Boolean.TRUE));
-
-        WwwUser u2 = userService.getUserByUsername(user.getUsername());
-        model.addAttribute("user", u2);
-        return "redirect:/account/show/" + u2.getId();
-    }
-
-    @RequestMapping(value = "/account/remove/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/account/delete/{id}", method = RequestMethod.GET)
     public String remove(@PathVariable("id") Long id, Model model,@AuthenticationPrincipal WwwUser user) {
         if (user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             // set enabled false, do not remove.
@@ -239,5 +213,33 @@ public class AccountController {
         return "redirect:/accounts";
     }
 
+
+    @RequestMapping(value = "/account/register", method = RequestMethod.GET)
+    public String register(Model model) {
+        model.addAttribute("user", new WwwUser());
+        return "/account/register";
+    }
+
+    // Used for "old" site, new functions for registering/creating users are above
+    @RequestMapping(value = "/account/create", method = RequestMethod.POST)
+    public String create(@ModelAttribute("user") UserRegisterForm user, Model model) {
+        WwwUser user1 = new WwwUser(
+                null,
+                user.getUsername(),
+                user.getPassword(),
+                user.getEmail(),
+                user.getFullName(),
+                user.getPhoneNumber(),
+                "ROLE_ADMIN",
+                Boolean.TRUE);
+        userService.create(user1);
+        /*
+        WwwUser u2 = userService.getUserByUsername(user.getUsername());
+        model.addAttribute("user", user2);
+        return "redirect:/account/show/" + user2.getId();
+        */
+
+        return "redirect:/mylogin";
+    }
 
 }

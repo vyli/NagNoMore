@@ -125,7 +125,9 @@ public class UserServiceImpl implements UserService {
         dbu.setFullName(u.getFullName());
         dbu.setPhoneNumber(u.getPhoneNumber());
         dbu.setEnabled(u.isEnabled());
-        dbu.setFamily(familyRepository.findFamily(u.getFamily().getId()));
+        if (u.getFamily() != null) {
+            dbu.setFamily(familyRepository.findFamily(u.getFamily().getId()));
+        }
         userRepository.create(dbu);
         u.setId(dbu.getId().longValue());
     }
