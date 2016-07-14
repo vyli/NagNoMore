@@ -1,8 +1,15 @@
 package edu.uta.sis.nagnomore.web.tasks;
 
 import edu.uta.sis.nagnomore.domain.data.Task;
+import edu.uta.sis.nagnomore.domain.data.WwwFamily;
+import edu.uta.sis.nagnomore.domain.data.WwwUser;
+import edu.uta.sis.nagnomore.domain.data.Category;
+import edu.uta.sis.nagnomore.domain.service.CategoryService;
+import edu.uta.sis.nagnomore.domain.service.FamilyService;
 import edu.uta.sis.nagnomore.domain.service.TaskService;
+import edu.uta.sis.nagnomore.domain.service.UserService;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -19,6 +26,15 @@ public class ReactTasksController {
 
     @Autowired
     TaskService taskService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    CategoryService categoryService;
+
+    @Autowired
+    FamilyService familyService;
 
     Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -90,10 +106,196 @@ public class ReactTasksController {
         Task task = taskService.find(id);
         return task;
     }
+
+    //find
+    @RequestMapping(value = "/react/tasks/findByCategory", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Task> listTasksByCategory(Integer categoryId){
+        logger.debug("find - react - Tasks  - Category");
+        Category c = categoryService.get(categoryId);
+        List<Task> list = taskService.findAllByCategory(c);
+        return list;
+    }
+
+    @RequestMapping(value = "/react/tasks/findByDuedate", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Task> listTasksByDueDate(DateTime start, DateTime end){
+        logger.debug("find - react - Tasks - DueDate");
+        List<Task> list = taskService.findAllByDueDate(start, end);
+        return list;
+    }
+    @RequestMapping(value = "/react/tasks/findByStatus", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Task> listTasksByStatus(Task.Status status){
+        logger.debug("find - react - Tasks - Status");
+        List<Task> list = taskService.findAllByStatus(status);
+        return list;
+    }
+
+    @RequestMapping(value = "/react/tasks/findByPriority", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Task> listTasksByDueDate(Integer priority){
+        logger.debug("find - react - Tasks  - Priority");
+        List<Task> list = taskService.findAllByPriority(priority);
+        return list;
+    }
+    @RequestMapping(value = "/react/tasks/findByPrivacy", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Task> listTasksByDueDate(boolean privacy){
+        logger.debug("find - react - Tasks  - Privacy");
+        List<Task> list = taskService.findAllByPrivacy(privacy);
+        return list;
+    }
+
+
+    @RequestMapping(value = "/react/tasks/findByAssignee", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Task> listTasksByAssignee(long aId, @RequestParam(required=false) Integer categoryId,
+                                          @RequestParam(required=false) Task.Status status,
+                                          @RequestParam(required=false) Boolean privacy){
+        logger.debug("find - react - Tasks - Assignee");
+        List<Task> list;
+        WwwUser u = userService.getUserById(aId);
+        if(categoryId != null) {
+            logger.debug(" & Category");
+            Category c = categoryService.get(categoryId);
+            if(status != null){
+                logger.debug(" & Status");
+                if(privacy != null) {
+                    logger.debug(" & Privacy");
+                    list = taskService.findAllByAssigneeAndCategoryAndStatusAndPrivacy(u, c, status, privacy);
+                }else{  // "privacy" is not there
+                    logger.debug("find - react - Tasks - Assignee & Category & Status");
+                    list = taskService.findAllByAssigneeAndCategoryAndStatus(u,c,status);
+                }
+            }else{ // "status" is not there
+                if(privacy != null){
+                    logger.debug("find - react - Tasks - Assignee & Category & Privacy");
+                    list =taskService.findAllByAssigneeAndCategoryAndPrivacy(u,c,privacy);
+                }else{ // status& Privacy is not there
+                    logger.debug("find - react - Tasks- Assignee & Category");
+                    list= taskService.findAllByAssigneeAndCategory(u,c);
+                }
+            }
+        } else {// category is not there
+            if(status != null){
+                logger.debug(" & Status");
+                if(privacy != null) {
+                    logger.debug(" & Privacy");
+                    logger.debug("find - react - Tasks - Assignee & Status & Privacy");
+                    list = taskService.findAllByAssigneeAndStatusAndPrivacy(u, status, privacy);
+                }else{  // "privacy" &category is not there
+                    logger.debug("find - react - Tasks - Assignee & Status");
+                    list = taskService.findAllByAssigneeAndStatus(u,status);
+                }
+            }else{ // "status"&category is not there
+                if(privacy != null){
+                    logger.debug("find - react - Tasks - Assignee & Privacy");
+                    list =taskService.findAllByAssigneeAndPrivacy(u,privacy);
+                }else{ // category& status& Privacy is not there
+                    logger.debug("find - react - Tasks - Assignee - all");
+                    list= taskService.findAllByAssignee(u);
+                }
+            }
+        }
+        return list;
+    }
+
+    @RequestMapping(value = "/react/tasks/findByAssigneeAndDuedate", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Task> listTasksByAssignee(long aId, DateTime start, DateTime end){
+        logger.debug("find - react - Tasks - Assignee & DueDate");
+        WwwUser u = userService.getUserById(aId);
+        List<Task> list = taskService.findAllByAssigneeAndDueDate(u, start,end);
+        return list;
+    }
+
+
+    // byCreator
+    @RequestMapping(value = "/react/tasks/findByCreator", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Task> listTasksByCreator(long cId, @RequestParam(required=false) Integer categoryId,
+                                          @RequestParam(required=false) Task.Status status,
+                                          @RequestParam(required=false) Boolean privacy){
+        logger.debug("find - react - Tasks - Creator");
+        List<Task> list;
+        WwwUser u = userService.getUserById(cId);
+        if(categoryId != null) {
+            logger.debug(" & Category");
+            Category c = categoryService.get(categoryId);
+            if(status != null){
+                logger.debug(" & Status");
+                if(privacy != null) {
+                    logger.debug(" & Privacy");
+                    list = taskService.findAllByCreatorAndCategoryAndStatusAndPrivacy(u, c, status, privacy);
+                }else{  // "privacy" is not there
+                    logger.debug("find - react - Tasks - Creator & Category & Status");
+                    list = taskService.findAllByCreatorAndCategoryAndStatus(u,c,status);
+                }
+            }else{ // "status" is not there
+                if(privacy != null){
+                    logger.debug("find - react - Tasks - Creator & Category & Privacy");
+                    list =taskService.findAllByCreatorAndCategoryAndPrivacy(u,c,privacy);
+                }else{ // status& Privacy is not there
+                    logger.debug("find - react - Tasks- Creator & Category");
+                    list= taskService.findAllByCreatorAndCategory(u,c);
+                }
+            }
+        } else {// category is not there
+            if(status != null){
+                logger.debug(" & Status");
+                if(privacy != null) {
+                    logger.debug(" & Privacy");
+                    logger.debug("find - react - Tasks - Creator & Status & Privacy");
+                    list = taskService.findAllByCreatorAndStatusAndPrivacy(u, status, privacy);
+                }else{  // "privacy" &category is not there
+                    logger.debug("find - react - Tasks - Creator & Status");
+                    list = taskService.findAllByCreatorAndStatus(u,status);
+                }
+            }else{ // "status"&category is not there
+                if(privacy != null){
+                    logger.debug("find - react - Tasks - Creator & Privacy");
+                    list =taskService.findAllByCreatorAndPrivacy(u,privacy);
+                }else{ // category& status& Privacy is not there
+                    logger.debug("find - react - Tasks - Creator - all");
+                    list= taskService.findAllByCreator(u);
+                }
+            }
+        }
+        return list;
+    }
+
+    @RequestMapping(value = "/react/tasks/findByCreatorAndDuedate", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Task> listTasksByCreator(long cId, DateTime start, DateTime end){
+        logger.debug("find - react - Tasks  - Creator & DueDate");
+        WwwUser u = userService.getUserById(cId);
+        List<Task> list = taskService.findAllByCreatorAndDueDate(u, start,end);
+        return list;
+    }
+
+    // find by family
+    @RequestMapping(value = "/react/tasks/findByFamily", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Task> listTasksByFamily(Integer fId, @RequestParam(required=false)Integer cId,
+                                        @RequestParam(required=false) Boolean privacy){
+        logger.debug("find - react - Tasks  - Family");
+        // List<Task> list;
+        if(cId != null){
+            Category c = categoryService.get(cId);
+            if(privacy != null){//
+                logger.debug("find - react - Tasks  - Family & Category & Privacy");
+                return taskService.findAllByFamilyAndCategoryAndPrivacy(familyService.findFamily(fId),c,privacy);
+            }
+            logger.debug("find - react - Tasks  - Family & Category");
+            return taskService.findAllByFamilyAndCategory(familyService.findFamily(fId),c);
+        } else if(cId == null && privacy== null) {
+            logger.debug("find - react - Tasks  - Family");
+            return taskService.findAllByFamily(familyService.findFamily(fId));
+        }
+        // TODO ??: taskService.findAllByFamilyAndPrivacy ??
+        logger.debug("TODO ?? : find - react - Tasks  - Family & Privacy = returns NULL");
+        return null;
+    }
+
 }
-/*
-
-
-
-
-*/
