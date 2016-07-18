@@ -16,6 +16,7 @@ public interface TaskRepository {
     public TaskEntity remove(Integer id);
     public List<TaskEntity> findAll();
 
+
     // Find all by one field
 
     //public List<TaskEntity> findAllByLocation(LocationEntity le);
@@ -27,6 +28,10 @@ public interface TaskRepository {
     public List<TaskEntity> findAllByFamily(FamilyEntity fe);
     public List<TaskEntity> findAllByPrivacy(Boolean b);
     public List<TaskEntity> findAllByDueDate(DateTime start, DateTime end);
+    public List<TaskEntity> findAllTasksWithReminders();
+    public List<TaskEntity> findAllOverdue();
+    public List<TaskEntity> findAllWithOverdueReminders();
+
 
     // Find all by two fields
 

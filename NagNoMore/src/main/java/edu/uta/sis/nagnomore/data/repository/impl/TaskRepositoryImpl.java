@@ -121,6 +121,45 @@ public class TaskRepositoryImpl implements TaskRepository {
         }
     }
 
+    public List<TaskEntity> findAllTasksWithReminders() {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.reminder IS NOT NULL", TaskEntity.class)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllOverdue() {
+        try {
+            DateTime now = DateTime.now();
+            TaskEntity.Status status = TaskEntity.Status.COMPLETED;
+            List<TaskEntity> retList = em.createQuery("From TaskEntity t WHERE t.due <= :now AND t.status <> :status", TaskEntity.class)
+                    .setParameter("now", now)
+                    .setParameter("status", status)
+                    .getResultList();
+
+            return retList;
+
+        } catch (NoResultException nre) {
+            /* no-op */
+            return new ArrayList<TaskEntity>();
+        }
+    }
+
+    public List<TaskEntity> findAllWithOverdueReminders() {
+        try {
+            DateTime now = DateTime.now();
+            TaskEntity.Status status = TaskEntity.Status.COMPLETED;
+            List<TaskEntity> retList = em.createQuery("From TaskEntity t WHERE t.reminder.time <= :now AND t.status <> :status", TaskEntity.class)
+                    .setParameter("now", now)
+                    .setParameter("status", status)
+                    .getResultList();
+
+            return retList;
+
+        } catch (NoResultException nre) {
+            /* no-op */
+            return new ArrayList<TaskEntity>();
+        }
+    }
     // *************************** Search by two fields:
     //**************************************************
 

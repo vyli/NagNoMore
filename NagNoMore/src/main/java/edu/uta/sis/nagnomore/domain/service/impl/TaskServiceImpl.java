@@ -100,8 +100,10 @@ public class TaskServiceImpl implements TaskService {
 
         ReminderEntity rem = new ReminderEntity();
         Reminder reminder = t.getReminder();
-        BeanUtils.copyProperties(reminder, rem);
-        te.setReminder(rem);
+        if(reminder != null) {
+            BeanUtils.copyProperties(reminder, rem);
+            te.setReminder(rem);
+        }
 
 
         if(doUpdate)
@@ -110,6 +112,34 @@ public class TaskServiceImpl implements TaskService {
             taskRepository.addTask(te);
 
         BeanUtils.copyProperties(te,t);
+    }
+
+    @Transactional
+    public void updateAlarms(){
+        List<Task> suspects = findAllWithOverdueReminders();
+        Task t = new Task();
+        Reminder r = new Reminder();
+        Boolean alarm = false;
+        DateTime dt = null;
+
+        for(int i = 0; i < suspects.size(); i++) {
+            t = suspects.get(i);
+            TaskEntity te = taskRepository.find(t.getId());
+
+            ReminderEntity re = te.getReminder();
+            alarm = t.getAlarm();
+            if (re != null && !alarm){
+                dt = re.getTime();
+                boolean b = dt.isBeforeNow();
+                if(b){
+                    // Alarm needs to be updated
+                    t.setAlarm(true);
+                    BeanUtils.copyProperties(t,te);
+                    taskRepository.updateTask(te);
+                }
+
+            }
+        }
     }
 
     @Transactional(readOnly = false)
@@ -224,6 +254,33 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findAllByDueDate(DateTime start, DateTime end) {
 
         List <TaskEntity> list = taskRepository.findAllByDueDate(start, end);
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Task> findAllTasksWithReminders() {
+
+        List <TaskEntity> list = taskRepository.findAllTasksWithReminders();
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Task> findAllOverdue() {
+
+        List <TaskEntity> list = taskRepository.findAllOverdue();
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Task> findAllWithOverdueReminders() {
+
+        List <TaskEntity> list = taskRepository.findAllWithOverdueReminders();
         List<Task> tasks = getTasks(list);
 
         return tasks;

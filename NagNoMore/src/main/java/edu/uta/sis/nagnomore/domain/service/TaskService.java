@@ -24,6 +24,9 @@ public interface TaskService {
     // I do not think this is needed at all.
     //public List<Task> findAllByLocation(Location l);
 
+    // Check if past reminder time and alarm not set
+    public void updateAlarms();
+
     // Find all by one parameter:
 
     public List<Task> findAllByCategory(Category c);
@@ -34,6 +37,9 @@ public interface TaskService {
     public List<Task> findAllByFamily(WwwFamily f);
     public List<Task> findAllByPrivacy(Boolean p);
     public List<Task> findAllByDueDate(DateTime start, DateTime end);
+    public List<Task> findAllTasksWithReminders();
+    public List<Task> findAllOverdue();
+    public List<Task> findAllWithOverdueReminders();
 
     // Find all by two parameters:
 

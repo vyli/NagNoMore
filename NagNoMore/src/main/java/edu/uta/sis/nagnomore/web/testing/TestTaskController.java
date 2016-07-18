@@ -173,11 +173,23 @@ public class TestTaskController {
         tcc.test1();
 
         DateTime dt = DateTime.now();
+        DateTime past = dt.minusDays(1);
         DateTime due1 = dt.plusWeeks(2);
         DateTime due2 = dt.plusWeeks(3);
         DateTime due3 = dt.plusWeeks(4);
         DateTime start = due2.minusDays(1);
         DateTime end = due2.plusDays(1);
+
+        // create reminder
+        Reminder rem1 = new Reminder();
+        rem1.setTitle("Remember to complete your task! This Reminder is in the past.");
+        rem1.setTime(past);
+        rs.create(rem1);
+
+        Reminder rem2 = new Reminder();
+        rem2.setTitle("Remember to complete your task! This reminder is in the future.");
+        rem2.setTime(due3);
+        rs.create(rem2);
 
         List<Category> catlist = cs.getCategories();
         Category cat1 = catlist.get(0);
@@ -188,22 +200,22 @@ public class TestTaskController {
         this.createTestTask(
                 "Test task 1",
                 "This is a task has due date creation + 2 weeks",
-                dt, due1, 0, false, true, cat1, u1, u3, f, Task.Status.COMPLETED,null, false
+                dt, due1, 0, false, false, cat1, u1, u3, f, Task.Status.COMPLETED, null, false
         );
         this.createTestTask(
                 "Test task 2",
                 "This is a task has due date creation + 3 weeks",
-                dt, due2, 1, true, false, cat2, u1, u3, f1, Task.Status.NEEDS_ACTION,null, false
+                dt, past, 1, true, false, cat2, u1, u3, f1, Task.Status.NEEDS_ACTION, rem1, false
         );
         this.createTestTask(
                 "Test task 3",
                 "This is a task has due date creation + 3 weeks",
-                dt, due2, 1, false, true, cat2, u3, u1, f, Task.Status.IN_PROGRESS, null, false
+                dt, past, 1, false, false, cat2, u3, u1, f, Task.Status.IN_PROGRESS, rem1, false
         );
         this.createTestTask(
                 "Test task 4",
                 "This is a task has due date creation + 4 weeks",
-                dt, due3, 1, true, true, cat1, u2, u4, f1, Task.Status.IN_PROGRESS, null, false
+                dt, past, 1, true, false, cat1, u2, u4, f1, Task.Status.IN_PROGRESS, rem1, false
         );
         this.createTestTask(
                 "Test task 5",
@@ -230,7 +242,17 @@ public class TestTaskController {
         results = taskService.findAllByPrivacy(false);
         System.out.println("findAllByPrivacy() should find 3 tasks. Found: " +results.size());
         results = taskService.findAllByDueDate(start, end);
-        System.out.println("findAllByDueDate() should find 2 tasks. Found: " +results.size());
+        System.out.println("findAllByDueDate() should find 0 tasks. Found: " +results.size());
+        results = taskService.findAllTasksWithReminders();
+        System.out.println("findAllTasksWithReminders() should find 3 tasks. Found: " +results.size());
+        results = taskService.findAllOverdue();
+        System.out.println("findAllOverdue() should find 3 tasks. Found: " +results.size());
+        results = taskService.findAllWithOverdueReminders();
+        System.out.println("findAllWithOverdueReminders() should find 3 tasks. Found: " +results.size());
+
+
+        // Update alarm=true on tasks with overdue reminders and not completed status
+        taskService.updateAlarms();
 
         System.out.println("Breakpoint place holder");
 
@@ -259,6 +281,11 @@ public class TestTaskController {
         }
         if(f1 != null) {
             fs.removeFamily(f1.getId());
+        }
+
+        //Remove reminders
+        if(rem1 != null) {
+            rs.remove(rem1);
         }
 
         return "/home";
@@ -300,7 +327,8 @@ public class TestTaskController {
         t.setAssignee(assignee);
         t.setStatus(status);
         t.setFamily(family);
-        t.setReminder(reminder);
+        if(reminder != null)
+            t.setReminder(reminder);
 
         if(!modify)
             taskService.addTask(t);
