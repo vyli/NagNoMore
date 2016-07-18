@@ -4,14 +4,8 @@ import edu.uta.sis.nagnomore.data.entities.FamilyEntity;
 import edu.uta.sis.nagnomore.data.entities.UserEntity;
 import edu.uta.sis.nagnomore.data.repository.FamilyRepository;
 import edu.uta.sis.nagnomore.data.repository.UserRepository;
-import edu.uta.sis.nagnomore.domain.data.Category;
-import edu.uta.sis.nagnomore.domain.data.Task;
-import edu.uta.sis.nagnomore.domain.data.WwwFamily;
-import edu.uta.sis.nagnomore.domain.data.WwwUser;
-import edu.uta.sis.nagnomore.domain.service.CategoryService;
-import edu.uta.sis.nagnomore.domain.service.FamilyService;
-import edu.uta.sis.nagnomore.domain.service.TaskService;
-import edu.uta.sis.nagnomore.domain.service.UserService;
+import edu.uta.sis.nagnomore.domain.data.*;
+import edu.uta.sis.nagnomore.domain.service.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,6 +34,8 @@ public class TestTaskController {
     @Autowired
     UserRepository ur;
 
+    @Autowired
+    ReminderService rs;
 
     @Autowired
     TestCategoryController tcc;
@@ -70,15 +66,21 @@ public class TestTaskController {
 
         DateTime dt = DateTime.now();
         DateTime due = dt.plusWeeks(2);
-
+        DateTime alarm = dt.plusWeeks(4);
         List<Category> catlist = cs.getCategories();
         Category cat = catlist.get(1);
+
+        // create reminder
+        Reminder rem1 = new Reminder();
+        rem1.setTitle("Remember to complete your task!");
+        rem1.setTime(alarm);
+        rs.create(rem1);
 
         // Modify = false
         this.createTestTask(
                 "Test task 1",
                 "This is a task created by TestTaskController",
-                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.COMPLETED, false
+                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.COMPLETED, rem1, false
 
         );
 
@@ -91,7 +93,7 @@ public class TestTaskController {
         this.createTestTask(
                 "Test task modified",
                 "This is a task created and modified by TestTaskController",
-                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.NEEDS_ACTION, true
+                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.NEEDS_ACTION, rem1, true
 
         );
 
@@ -186,27 +188,27 @@ public class TestTaskController {
         this.createTestTask(
                 "Test task 1",
                 "This is a task has due date creation + 2 weeks",
-                dt, due1, 0, false, true, cat1, u1, u3, f, Task.Status.COMPLETED, false
+                dt, due1, 0, false, true, cat1, u1, u3, f, Task.Status.COMPLETED,null, false
         );
         this.createTestTask(
                 "Test task 2",
                 "This is a task has due date creation + 3 weeks",
-                dt, due2, 1, true, false, cat2, u1, u3, f1, Task.Status.NEEDS_ACTION, false
+                dt, due2, 1, true, false, cat2, u1, u3, f1, Task.Status.NEEDS_ACTION,null, false
         );
         this.createTestTask(
                 "Test task 3",
                 "This is a task has due date creation + 3 weeks",
-                dt, due2, 1, false, true, cat2, u3, u1, f, Task.Status.IN_PROGRESS, false
+                dt, due2, 1, false, true, cat2, u3, u1, f, Task.Status.IN_PROGRESS, null, false
         );
         this.createTestTask(
                 "Test task 4",
                 "This is a task has due date creation + 4 weeks",
-                dt, due3, 1, true, true, cat1, u2, u4, f1, Task.Status.IN_PROGRESS, false
+                dt, due3, 1, true, true, cat1, u2, u4, f1, Task.Status.IN_PROGRESS, null, false
         );
         this.createTestTask(
                 "Test task 5",
                 "This is a task has due date creation + 4 weeks",
-                dt, due3, 1, false, false, cat1, u4, u1, f, Task.Status.COMPLETED, false
+                dt, due3, 1, false, false, cat1, u4, u1, f, Task.Status.COMPLETED, null, false
         );
 
         List<Task> results = null;
@@ -274,6 +276,7 @@ public class TestTaskController {
                                 Boolean alarm, Category category,
                                 WwwUser creator, WwwUser assignee,
                                 WwwFamily family, Task.Status status,
+                                Reminder reminder,
                                 Boolean modify
                                  ) {
 
@@ -297,6 +300,7 @@ public class TestTaskController {
         t.setAssignee(assignee);
         t.setStatus(status);
         t.setFamily(family);
+        t.setReminder(reminder);
 
         if(!modify)
             taskService.addTask(t);

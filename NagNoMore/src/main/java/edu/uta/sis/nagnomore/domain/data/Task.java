@@ -44,6 +44,8 @@ public class Task {
 
     String location;
 
+    Reminder reminder;
+
     public enum Status {
         NEEDS_ACTION, IN_PROGRESS, COMPLETED
     }
@@ -163,4 +165,13 @@ public class Task {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    public Reminder getReminder() {
+        return reminder;
+    }
+
+    public void setReminder(Reminder reminder) {
+        this.reminder = reminder;
+    }
+
 }

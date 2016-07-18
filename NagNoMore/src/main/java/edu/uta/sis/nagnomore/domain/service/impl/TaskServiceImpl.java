@@ -1,17 +1,11 @@
 package edu.uta.sis.nagnomore.domain.service.impl;
 
-import edu.uta.sis.nagnomore.data.entities.CategoryEntity;
-import edu.uta.sis.nagnomore.data.entities.FamilyEntity;
-import edu.uta.sis.nagnomore.data.entities.TaskEntity;
-import edu.uta.sis.nagnomore.data.entities.UserEntity;
+import edu.uta.sis.nagnomore.data.entities.*;
 import edu.uta.sis.nagnomore.data.repository.CategoryRepository;
 import edu.uta.sis.nagnomore.data.repository.FamilyRepository;
 import edu.uta.sis.nagnomore.data.repository.TaskRepository;
 import edu.uta.sis.nagnomore.data.repository.UserRepository;
-import edu.uta.sis.nagnomore.domain.data.Category;
-import edu.uta.sis.nagnomore.domain.data.Task;
-import edu.uta.sis.nagnomore.domain.data.WwwFamily;
-import edu.uta.sis.nagnomore.domain.data.WwwUser;
+import edu.uta.sis.nagnomore.domain.data.*;
 import edu.uta.sis.nagnomore.domain.service.TaskService;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
@@ -72,10 +66,17 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
-    @Transactional(readOnly = false)
-    public void addTask(Task t) {
+    // Helper for common logic in create and update
+    private void HandleCreateUpdateTask(Task t, Boolean doUpdate) {
         TaskEntity te = new TaskEntity();
         BeanUtils.copyProperties(t,te);
+
+        ReminderEntity re = new ReminderEntity();
+        Reminder r = t.getReminder();
+        if(r != null) {
+            BeanUtils.copyProperties(r, re);
+            te.setReminder(re);
+        }
 
         CategoryEntity ce = new CategoryEntity();
         Category c = t.getCategory();
@@ -97,39 +98,30 @@ public class TaskServiceImpl implements TaskService {
         TaskEntity.Status tes  = getStatus(ts);
         te.setStatus(tes);
 
-        taskRepository.addTask(te);
+        ReminderEntity rem = new ReminderEntity();
+        Reminder reminder = t.getReminder();
+        BeanUtils.copyProperties(reminder, rem);
+        te.setReminder(rem);
+
+
+        if(doUpdate)
+            taskRepository.updateTask(te);
+        else
+            taskRepository.addTask(te);
 
         BeanUtils.copyProperties(te,t);
     }
 
     @Transactional(readOnly = false)
+    public void addTask(Task t) {
+
+        HandleCreateUpdateTask(t, false);
+    }
+
+    @Transactional(readOnly = false)
     public void updateTask(Task t) {
-        TaskEntity te = new TaskEntity();
-        BeanUtils.copyProperties(t,te);
 
-        CategoryEntity ce = new CategoryEntity();
-        Category c = t.getCategory();
-        BeanUtils.copyProperties(c, ce);
-        te.setCategory(ce);
-
-        if (t.getFamily() != null) {
-            FamilyEntity fe = familyRepository.findFamily(t.getFamily().getId());
-            te.setFamily(fe);
-        }
-
-        UserEntity ue = userRepository.getUserById(t.getCreator().getId().intValue());
-        te.setCreator(ue);
-
-        UserEntity ue2 = userRepository.getUserById(t.getAssignee().getId().intValue());
-        te.setAssignee(ue2);
-
-        Task.Status ts = t.getStatus();
-        TaskEntity.Status tes  = getStatus(ts);
-        te.setStatus(tes);
-
-        taskRepository.updateTask(te);
-
-        BeanUtils.copyProperties(te,t);
+        HandleCreateUpdateTask(t, true);
     }
 
     @Transactional(readOnly = true)
