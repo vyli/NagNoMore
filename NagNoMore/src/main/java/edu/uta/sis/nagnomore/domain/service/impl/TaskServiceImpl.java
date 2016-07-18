@@ -383,6 +383,23 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
+    public List<Task> findAllOverdueByAssignee(WwwUser u) {
+        UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
+        List <TaskEntity> list = taskRepository.findAllOverdueByAssignee(ue);
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Task> findAllWithOverdueRemindersByAssignee(WwwUser u) {
+        UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
+        List <TaskEntity> list = taskRepository.findAllWithOverdueRemindersByAssignee(ue);
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
     // Find all by three parameters
 
     @Transactional(readOnly = true)

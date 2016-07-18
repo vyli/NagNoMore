@@ -245,6 +245,41 @@ public class TaskRepositoryImpl implements TaskRepository {
         }
     }
 
+    public List<TaskEntity> findAllOverdueByAssignee(UserEntity ue) {
+        try {
+            DateTime now = DateTime.now();
+            TaskEntity.Status status = TaskEntity.Status.COMPLETED;
+            List<TaskEntity> retList = em.createQuery("From TaskEntity t WHERE t.assignee=:ue AND t.due <= :now AND t.status <> :status", TaskEntity.class)
+                    .setParameter("ue", ue)
+                    .setParameter("now", now)
+                    .setParameter("status", status)
+                    .getResultList();
+
+            return retList;
+
+        } catch (NoResultException nre) {
+            /* no-op */
+            return new ArrayList<TaskEntity>();
+        }
+    }
+
+    public List<TaskEntity> findAllWithOverdueRemindersByAssignee(UserEntity ue) {
+        try {
+            DateTime now = DateTime.now();
+            TaskEntity.Status status = TaskEntity.Status.COMPLETED;
+            List<TaskEntity> retList = em.createQuery("From TaskEntity t WHERE t.assignee=:ue AND t.reminder.time <= :now AND t.status <> :status", TaskEntity.class)
+                    .setParameter("ue", ue)
+                    .setParameter("now", now)
+                    .setParameter("status", status)
+                    .getResultList();
+
+            return retList;
+
+        } catch (NoResultException nre) {
+            /* no-op */
+            return new ArrayList<TaskEntity>();
+        }
+    }
     // *************************** Search by three fields:
     //***************************************************
 

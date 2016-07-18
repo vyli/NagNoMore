@@ -52,6 +52,8 @@ public interface TaskService {
     public List<Task> findAllByAssigneeAndCategory(WwwUser u, Category e);
     public List<Task> findAllByCreatorAndDueDate(WwwUser u, DateTime start, DateTime end);
     public List<Task> findAllByAssigneeAndDueDate(WwwUser u, DateTime start, DateTime end);
+    public List<Task> findAllOverdueByAssignee(WwwUser u);
+    public List<Task> findAllWithOverdueRemindersByAssignee(WwwUser u);
 
     // Find all by three parameters
 
