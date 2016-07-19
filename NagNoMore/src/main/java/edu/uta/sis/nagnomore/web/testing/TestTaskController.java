@@ -205,7 +205,7 @@ public class TestTaskController {
         this.createTestTask(
                 "Test task 2",
                 "This is a task has due date creation + 3 weeks",
-                dt, past, 1, true, false, cat2, u1, u3, f1, Task.Status.NEEDS_ACTION, rem1, false
+                dt, past, 1, false, false, cat2, u1, u3, f1, Task.Status.NEEDS_ACTION, rem1, false
         );
         this.createTestTask(
                 "Test task 3",
@@ -250,11 +250,55 @@ public class TestTaskController {
         results = taskService.findAllWithOverdueReminders();
         System.out.println("findAllWithOverdueReminders() should find 3 tasks. Found: " +results.size());
 
+        results = taskService.findAllByCreatorAndPrivacy(u2, false);
+        System.out.println("findAllByCreatorAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndPrivacy(u3, false);
+        System.out.println("findAllByAssigneeAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByCreatorAndStatus(u2, Task.Status.IN_PROGRESS);
+        System.out.println("findAllByCreatorAndStatus() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndStatus(u3, Task.Status.IN_PROGRESS);
+        System.out.println("findAllByAssigneeAndStatus() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByFamilyAndCategory(f1, cat1);
+        System.out.println("findAllByFamilyAndCategory() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByCreatorAndCategory(u2, cat1);
+        System.out.println("findAllByCreatorAndCategory() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndCategory(u3, cat1);
+        System.out.println("findAllByAssigneeAndcategory() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByCreatorAndDueDate(u2, start, end);
+        System.out.println("findAllByCreatorAndDueDate() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndDueDate(u3, start, end);
+        System.out.println("findAllByAssigneeAndDueDate() should find X tasks. Found: " +results.size());
+        results = taskService.findAllOverdueByAssignee(u3);
+        System.out.println("findAllOverdueByAssignee() should find X tasks. Found: " +results.size());
+        results = taskService.findAllWithOverdueRemindersByAssignee(u3);
+        System.out.println("findAllWithOverdueRemmindersByAssignee() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByFamilyAndPrivacy(f1, false);
+        System.out.println("findAllByFamilyAndPrivacy() should find 1 tasks. Found: " +results.size());
+        
+        results = taskService.findAllByCreatorAndCategoryAndStatus(u2, cat1, Task.Status.IN_PROGRESS);
+        System.out.println("findAllByCreatorAndAndCategoryAndStatus() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndCategoryAndStatus(u3, cat1, Task.Status.IN_PROGRESS);
+        System.out.println("findAllByAssigneeAndAndCategoryAndStatus() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByCreatorAndStatusAndPrivacy(u2, Task.Status.IN_PROGRESS, false);
+        System.out.println("findAllByCreatorAndStatusAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndStatusAndPrivacy(u3, Task.Status.IN_PROGRESS, false);
+        System.out.println("findAllByAssigneeAndStatusAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByFamilyAndCategoryAndPrivacy(f1, cat1, false);
+        System.out.println("findAllByFamilyAndCategoryAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByCreatorAndCategoryAndPrivacy(u2, cat1, false);
+        System.out.println("findAllByCreatorAndCategoryAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndCategoryAndPrivacy(u3, cat1, false);
+        System.out.println("findAllByAssigneeAndCategoryAndPrivacy() should find X tasks. Found: " +results.size());
+
+        results = taskService.findAllByCreatorAndCategoryAndStatusAndPrivacy(u2, cat1, Task.Status.IN_PROGRESS, false);
+        System.out.println("findAllByCreatorAndCategoryAndStatusAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndCategoryAndStatusAndPrivacy(u3, cat1, Task.Status.IN_PROGRESS, false);
+        System.out.println("findAllByAssigneeAndCategoryAndStatusAndPrivacy() should find X tasks. Found: " +results.size());
 
         // Update alarm=true on tasks with overdue reminders and not completed status
         taskService.updateAlarms();
 
-        System.out.println("Breakpoint place holder");
+        System.out.println("Breakpoint placeholder");
 
         // Cleanup
 

@@ -221,7 +221,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     public List<TaskEntity> findAllByCreatorAndDueDate(UserEntity ue, DateTime start, DateTime end) {
         try {
-            return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND (t.start >= :start AND t.end <= :end)", TaskEntity.class)
+            return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND (t.due >= :start AND t.due <= :end)", TaskEntity.class)
                     .setParameter("ue", ue)
                     .setParameter("start", start)
                     .setParameter("end", end)
@@ -234,7 +234,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     public List<TaskEntity> findAllByAssigneeAndDueDate(UserEntity ue, DateTime start, DateTime end) {
         try {
-            return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND (t.start >= :start AND t.end <= :end)", TaskEntity.class)
+            return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND (t.due >= :start AND t.due <= :end)", TaskEntity.class)
                     .setParameter("ue", ue)
                     .setParameter("start", start)
                     .setParameter("end", end)
@@ -283,7 +283,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     public List<TaskEntity> findAllByFamilyAndPrivacy(FamilyEntity fe, Boolean p) {
         try {
-            return em.createQuery("FROM TaskEntity t WHERE t.family=:fe AND t.privacy:p", TaskEntity.class)
+            return em.createQuery("FROM TaskEntity t WHERE t.family=:fe AND t.privacy=:p", TaskEntity.class)
                     .setParameter("fe", fe)
                     .setParameter("p", p)
                     .getResultList();
@@ -351,7 +351,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     public List<TaskEntity> findAllByFamilyAndCategoryAndPrivacy(FamilyEntity fe, CategoryEntity ce, Boolean p) {
 
-        return em.createQuery("FROM TaskEntity t WHERE t.family=:fe AND t.category=:ce", TaskEntity.class)
+        return em.createQuery("FROM TaskEntity t WHERE t.family=:fe AND t.category=:ce AND t.privacy=:p", TaskEntity.class)
                 .setParameter("fe", fe)
                 .setParameter("ce", ce)
                 .setParameter("p",p)
