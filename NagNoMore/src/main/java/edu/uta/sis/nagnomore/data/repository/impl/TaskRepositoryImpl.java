@@ -280,6 +280,18 @@ public class TaskRepositoryImpl implements TaskRepository {
             return new ArrayList<TaskEntity>();
         }
     }
+
+    public List<TaskEntity> findAllByFamilyAndPrivacy(FamilyEntity fe, Boolean p) {
+        try {
+            return em.createQuery("FROM TaskEntity t WHERE t.family=:fe AND t.privacy:p", TaskEntity.class)
+                    .setParameter("fe", fe)
+                    .setParameter("p", p)
+                    .getResultList();
+
+        } catch (NoResultException nre) {
+            return new ArrayList<TaskEntity>();
+        }
+    }
     // *************************** Search by three fields:
     //***************************************************
 

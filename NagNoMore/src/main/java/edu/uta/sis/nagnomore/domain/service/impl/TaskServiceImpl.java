@@ -400,6 +400,16 @@ public class TaskServiceImpl implements TaskService {
 
         return tasks;
     }
+
+    @Transactional(readOnly = true)
+    public List<Task> findAllByFamilyAndPrivacy(WwwFamily f, Boolean p) {
+
+        FamilyEntity fe = familyRepository.findFamily((int)(long)(f.getId()));
+        List<TaskEntity> list = taskRepository.findAllByFamilyAndPrivacy(fe, p);
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
     // Find all by three parameters
 
     @Transactional(readOnly = true)

@@ -46,6 +46,7 @@ public interface TaskRepository {
     public List<TaskEntity> findAllByAssigneeAndDueDate(UserEntity ue, DateTime start, DateTime end);
     public List<TaskEntity> findAllOverdueByAssignee(UserEntity ue);
     public List<TaskEntity> findAllWithOverdueRemindersByAssignee(UserEntity ue);
+    public List<TaskEntity> findAllByFamilyAndPrivacy(FamilyEntity fe, Boolean p);
 
     // Find all by three fields
 
