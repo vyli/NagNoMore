@@ -83,6 +83,7 @@ public class TestDataController {
     @RequestMapping(value="/test/createdata")
     public String createTestData(){
 
+        deleteAllData();
 
         //Tarvitaan muutama kategoria. Kopioidaan suoraan yltä Eeron koodis.
         Category ce1 = new Category();
@@ -182,8 +183,14 @@ public class TestDataController {
 
 
     @RequestMapping(value="/test/emptydb")
-    public String deleteAllData(){
+    public String deleteTestData(){
 
+        deleteAllData();
+
+        return "/jsp/testi/tyhja";
+    }
+
+    private void deleteAllData(){
         //Kannassa on dataa tauluissa userentity, task, family, categories
         //Poistojärjestys task -> categories -> userentity -> family
 
@@ -216,8 +223,6 @@ public class TestDataController {
             familyService.removeFamily(familyListIterator.next().getId());
         }
 
-
-        return "/jsp/testi/tyhja";
     }
 
     private void createTestTask(String title, String description,
