@@ -57,6 +57,9 @@ public class TaskEntity {
     @ManyToOne
     LocationEntity location;
 
+    @OneToOne
+    ReminderEntity reminder;
+
     public enum Status {
         NEEDS_ACTION, IN_PROGRESS, COMPLETED
     }
@@ -171,4 +174,9 @@ public class TaskEntity {
     public FamilyEntity getFamily() {return family;}
 
     public void setFamily(FamilyEntity family) {this.family = family;}
+
+    public ReminderEntity getReminder() {return reminder;}
+
+    public void setReminder(ReminderEntity reminder) {this.reminder = reminder;}
+
 }

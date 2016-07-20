@@ -121,6 +121,45 @@ public class TaskRepositoryImpl implements TaskRepository {
         }
     }
 
+    public List<TaskEntity> findAllTasksWithReminders() {
+
+        return em.createQuery("FROM TaskEntity t WHERE t.reminder IS NOT NULL", TaskEntity.class)
+                .getResultList();
+    }
+
+    public List<TaskEntity> findAllOverdue() {
+        try {
+            DateTime now = DateTime.now();
+            TaskEntity.Status status = TaskEntity.Status.COMPLETED;
+            List<TaskEntity> retList = em.createQuery("From TaskEntity t WHERE t.due <= :now AND t.status <> :status", TaskEntity.class)
+                    .setParameter("now", now)
+                    .setParameter("status", status)
+                    .getResultList();
+
+            return retList;
+
+        } catch (NoResultException nre) {
+            /* no-op */
+            return new ArrayList<TaskEntity>();
+        }
+    }
+
+    public List<TaskEntity> findAllWithOverdueReminders() {
+        try {
+            DateTime now = DateTime.now();
+            TaskEntity.Status status = TaskEntity.Status.COMPLETED;
+            List<TaskEntity> retList = em.createQuery("From TaskEntity t WHERE t.reminder.time <= :now AND t.status <> :status", TaskEntity.class)
+                    .setParameter("now", now)
+                    .setParameter("status", status)
+                    .getResultList();
+
+            return retList;
+
+        } catch (NoResultException nre) {
+            /* no-op */
+            return new ArrayList<TaskEntity>();
+        }
+    }
     // *************************** Search by two fields:
     //**************************************************
 
@@ -182,7 +221,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     public List<TaskEntity> findAllByCreatorAndDueDate(UserEntity ue, DateTime start, DateTime end) {
         try {
-            return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND (t.start >= :start AND t.end <= :end)", TaskEntity.class)
+            return em.createQuery("FROM TaskEntity t WHERE t.creator=:ue AND (t.due >= :start AND t.due <= :end)", TaskEntity.class)
                     .setParameter("ue", ue)
                     .setParameter("start", start)
                     .setParameter("end", end)
@@ -195,7 +234,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     public List<TaskEntity> findAllByAssigneeAndDueDate(UserEntity ue, DateTime start, DateTime end) {
         try {
-            return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND (t.start >= :start AND t.end <= :end)", TaskEntity.class)
+            return em.createQuery("FROM TaskEntity t WHERE t.assignee=:ue AND (t.due >= :start AND t.due <= :end)", TaskEntity.class)
                     .setParameter("ue", ue)
                     .setParameter("start", start)
                     .setParameter("end", end)
@@ -206,6 +245,53 @@ public class TaskRepositoryImpl implements TaskRepository {
         }
     }
 
+    public List<TaskEntity> findAllOverdueByAssignee(UserEntity ue) {
+        try {
+            DateTime now = DateTime.now();
+            TaskEntity.Status status = TaskEntity.Status.COMPLETED;
+            List<TaskEntity> retList = em.createQuery("From TaskEntity t WHERE t.assignee=:ue AND t.due <= :now AND t.status <> :status", TaskEntity.class)
+                    .setParameter("ue", ue)
+                    .setParameter("now", now)
+                    .setParameter("status", status)
+                    .getResultList();
+
+            return retList;
+
+        } catch (NoResultException nre) {
+            /* no-op */
+            return new ArrayList<TaskEntity>();
+        }
+    }
+
+    public List<TaskEntity> findAllWithOverdueRemindersByAssignee(UserEntity ue) {
+        try {
+            DateTime now = DateTime.now();
+            TaskEntity.Status status = TaskEntity.Status.COMPLETED;
+            List<TaskEntity> retList = em.createQuery("From TaskEntity t WHERE t.assignee=:ue AND t.reminder.time <= :now AND t.status <> :status", TaskEntity.class)
+                    .setParameter("ue", ue)
+                    .setParameter("now", now)
+                    .setParameter("status", status)
+                    .getResultList();
+
+            return retList;
+
+        } catch (NoResultException nre) {
+            /* no-op */
+            return new ArrayList<TaskEntity>();
+        }
+    }
+
+    public List<TaskEntity> findAllByFamilyAndPrivacy(FamilyEntity fe, Boolean p) {
+        try {
+            return em.createQuery("FROM TaskEntity t WHERE t.family=:fe AND t.privacy=:p", TaskEntity.class)
+                    .setParameter("fe", fe)
+                    .setParameter("p", p)
+                    .getResultList();
+
+        } catch (NoResultException nre) {
+            return new ArrayList<TaskEntity>();
+        }
+    }
     // *************************** Search by three fields:
     //***************************************************
 
@@ -265,7 +351,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     public List<TaskEntity> findAllByFamilyAndCategoryAndPrivacy(FamilyEntity fe, CategoryEntity ce, Boolean p) {
 
-        return em.createQuery("FROM TaskEntity t WHERE t.family=:fe AND t.category=:ce", TaskEntity.class)
+        return em.createQuery("FROM TaskEntity t WHERE t.family=:fe AND t.category=:ce AND t.privacy=:p", TaskEntity.class)
                 .setParameter("fe", fe)
                 .setParameter("ce", ce)
                 .setParameter("p",p)

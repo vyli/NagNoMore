@@ -4,14 +4,8 @@ import edu.uta.sis.nagnomore.data.entities.FamilyEntity;
 import edu.uta.sis.nagnomore.data.entities.UserEntity;
 import edu.uta.sis.nagnomore.data.repository.FamilyRepository;
 import edu.uta.sis.nagnomore.data.repository.UserRepository;
-import edu.uta.sis.nagnomore.domain.data.Category;
-import edu.uta.sis.nagnomore.domain.data.Task;
-import edu.uta.sis.nagnomore.domain.data.WwwFamily;
-import edu.uta.sis.nagnomore.domain.data.WwwUser;
-import edu.uta.sis.nagnomore.domain.service.CategoryService;
-import edu.uta.sis.nagnomore.domain.service.FamilyService;
-import edu.uta.sis.nagnomore.domain.service.TaskService;
-import edu.uta.sis.nagnomore.domain.service.UserService;
+import edu.uta.sis.nagnomore.domain.data.*;
+import edu.uta.sis.nagnomore.domain.service.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,6 +34,8 @@ public class TestTaskController {
     @Autowired
     UserRepository ur;
 
+    @Autowired
+    ReminderService rs;
 
     @Autowired
     TestCategoryController tcc;
@@ -70,15 +66,21 @@ public class TestTaskController {
 
         DateTime dt = DateTime.now();
         DateTime due = dt.plusWeeks(2);
-
+        DateTime alarm = dt.plusWeeks(4);
         List<Category> catlist = cs.getCategories();
         Category cat = catlist.get(1);
+
+        // create reminder
+        Reminder rem1 = new Reminder();
+        rem1.setTitle("Remember to complete your task!");
+        rem1.setTime(alarm);
+        rs.create(rem1);
 
         // Modify = false
         this.createTestTask(
                 "Test task 1",
                 "This is a task created by TestTaskController",
-                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.COMPLETED, false
+                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.COMPLETED, rem1, false
 
         );
 
@@ -91,7 +93,7 @@ public class TestTaskController {
         this.createTestTask(
                 "Test task modified",
                 "This is a task created and modified by TestTaskController",
-                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.NEEDS_ACTION, true
+                dt, due, 0, false, true, cat, u1, u2, f, Task.Status.NEEDS_ACTION, rem1, true
 
         );
 
@@ -171,11 +173,23 @@ public class TestTaskController {
         tcc.test1();
 
         DateTime dt = DateTime.now();
+        DateTime past = dt.minusDays(1);
         DateTime due1 = dt.plusWeeks(2);
         DateTime due2 = dt.plusWeeks(3);
         DateTime due3 = dt.plusWeeks(4);
         DateTime start = due2.minusDays(1);
         DateTime end = due2.plusDays(1);
+
+        // create reminder
+        Reminder rem1 = new Reminder();
+        rem1.setTitle("Remember to complete your task! This Reminder is in the past.");
+        rem1.setTime(past);
+        rs.create(rem1);
+
+        Reminder rem2 = new Reminder();
+        rem2.setTitle("Remember to complete your task! This reminder is in the future.");
+        rem2.setTime(due3);
+        rs.create(rem2);
 
         List<Category> catlist = cs.getCategories();
         Category cat1 = catlist.get(0);
@@ -186,27 +200,27 @@ public class TestTaskController {
         this.createTestTask(
                 "Test task 1",
                 "This is a task has due date creation + 2 weeks",
-                dt, due1, 0, false, true, cat1, u1, u3, f, Task.Status.COMPLETED, false
+                dt, due1, 0, false, false, cat1, u1, u3, f, Task.Status.COMPLETED, null, false
         );
         this.createTestTask(
                 "Test task 2",
                 "This is a task has due date creation + 3 weeks",
-                dt, due2, 1, true, false, cat2, u1, u3, f1, Task.Status.NEEDS_ACTION, false
+                dt, past, 1, false, false, cat2, u1, u3, f1, Task.Status.NEEDS_ACTION, rem1, false
         );
         this.createTestTask(
                 "Test task 3",
                 "This is a task has due date creation + 3 weeks",
-                dt, due2, 1, false, true, cat2, u3, u1, f, Task.Status.IN_PROGRESS, false
+                dt, past, 1, false, false, cat2, u3, u1, f, Task.Status.IN_PROGRESS, rem1, false
         );
         this.createTestTask(
                 "Test task 4",
                 "This is a task has due date creation + 4 weeks",
-                dt, due3, 1, true, true, cat1, u2, u4, f1, Task.Status.IN_PROGRESS, false
+                dt, past, 1, true, false, cat1, u2, u4, f1, Task.Status.IN_PROGRESS, rem1, false
         );
         this.createTestTask(
                 "Test task 5",
                 "This is a task has due date creation + 4 weeks",
-                dt, due3, 1, false, false, cat1, u4, u1, f, Task.Status.COMPLETED, false
+                dt, due3, 1, false, false, cat1, u4, u1, f, Task.Status.COMPLETED, null, false
         );
 
         List<Task> results = null;
@@ -228,9 +242,63 @@ public class TestTaskController {
         results = taskService.findAllByPrivacy(false);
         System.out.println("findAllByPrivacy() should find 3 tasks. Found: " +results.size());
         results = taskService.findAllByDueDate(start, end);
-        System.out.println("findAllByDueDate() should find 2 tasks. Found: " +results.size());
+        System.out.println("findAllByDueDate() should find 0 tasks. Found: " +results.size());
+        results = taskService.findAllTasksWithReminders();
+        System.out.println("findAllTasksWithReminders() should find 3 tasks. Found: " +results.size());
+        results = taskService.findAllOverdue();
+        System.out.println("findAllOverdue() should find 3 tasks. Found: " +results.size());
+        results = taskService.findAllWithOverdueReminders();
+        System.out.println("findAllWithOverdueReminders() should find 3 tasks. Found: " +results.size());
 
-        System.out.println("Breakpoint place holder");
+        results = taskService.findAllByCreatorAndPrivacy(u2, false);
+        System.out.println("findAllByCreatorAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndPrivacy(u3, false);
+        System.out.println("findAllByAssigneeAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByCreatorAndStatus(u2, Task.Status.IN_PROGRESS);
+        System.out.println("findAllByCreatorAndStatus() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndStatus(u3, Task.Status.IN_PROGRESS);
+        System.out.println("findAllByAssigneeAndStatus() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByFamilyAndCategory(f1, cat1);
+        System.out.println("findAllByFamilyAndCategory() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByCreatorAndCategory(u2, cat1);
+        System.out.println("findAllByCreatorAndCategory() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndCategory(u3, cat1);
+        System.out.println("findAllByAssigneeAndcategory() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByCreatorAndDueDate(u2, start, end);
+        System.out.println("findAllByCreatorAndDueDate() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndDueDate(u3, start, end);
+        System.out.println("findAllByAssigneeAndDueDate() should find X tasks. Found: " +results.size());
+        results = taskService.findAllOverdueByAssignee(u3);
+        System.out.println("findAllOverdueByAssignee() should find X tasks. Found: " +results.size());
+        results = taskService.findAllWithOverdueRemindersByAssignee(u3);
+        System.out.println("findAllWithOverdueRemmindersByAssignee() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByFamilyAndPrivacy(f1, false);
+        System.out.println("findAllByFamilyAndPrivacy() should find 1 tasks. Found: " +results.size());
+
+        results = taskService.findAllByCreatorAndCategoryAndStatus(u2, cat1, Task.Status.IN_PROGRESS);
+        System.out.println("findAllByCreatorAndAndCategoryAndStatus() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndCategoryAndStatus(u3, cat1, Task.Status.IN_PROGRESS);
+        System.out.println("findAllByAssigneeAndAndCategoryAndStatus() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByCreatorAndStatusAndPrivacy(u2, Task.Status.IN_PROGRESS, false);
+        System.out.println("findAllByCreatorAndStatusAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndStatusAndPrivacy(u3, Task.Status.IN_PROGRESS, false);
+        System.out.println("findAllByAssigneeAndStatusAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByFamilyAndCategoryAndPrivacy(f1, cat1, false);
+        System.out.println("findAllByFamilyAndCategoryAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByCreatorAndCategoryAndPrivacy(u2, cat1, false);
+        System.out.println("findAllByCreatorAndCategoryAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndCategoryAndPrivacy(u3, cat1, false);
+        System.out.println("findAllByAssigneeAndCategoryAndPrivacy() should find X tasks. Found: " +results.size());
+
+        results = taskService.findAllByCreatorAndCategoryAndStatusAndPrivacy(u2, cat1, Task.Status.IN_PROGRESS, false);
+        System.out.println("findAllByCreatorAndCategoryAndStatusAndPrivacy() should find X tasks. Found: " +results.size());
+        results = taskService.findAllByAssigneeAndCategoryAndStatusAndPrivacy(u3, cat1, Task.Status.IN_PROGRESS, false);
+        System.out.println("findAllByAssigneeAndCategoryAndStatusAndPrivacy() should find X tasks. Found: " +results.size());
+
+        // Update alarm=true on tasks with overdue reminders and not completed status
+        taskService.updateAlarms();
+
+        System.out.println("Breakpoint placeholder");
 
         // Cleanup
 
@@ -259,6 +327,11 @@ public class TestTaskController {
             fs.removeFamily(f1.getId());
         }
 
+        //Remove reminders
+        if(rem1 != null) {
+            rs.remove(rem1);
+        }
+
         return "/home";
     }
 
@@ -274,6 +347,7 @@ public class TestTaskController {
                                 Boolean alarm, Category category,
                                 WwwUser creator, WwwUser assignee,
                                 WwwFamily family, Task.Status status,
+                                Reminder reminder,
                                 Boolean modify
                                  ) {
 
@@ -297,6 +371,8 @@ public class TestTaskController {
         t.setAssignee(assignee);
         t.setStatus(status);
         t.setFamily(family);
+        if(reminder != null)
+            t.setReminder(reminder);
 
         if(!modify)
             taskService.addTask(t);

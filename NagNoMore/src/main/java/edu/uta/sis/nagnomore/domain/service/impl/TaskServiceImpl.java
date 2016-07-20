@@ -1,17 +1,11 @@
 package edu.uta.sis.nagnomore.domain.service.impl;
 
-import edu.uta.sis.nagnomore.data.entities.CategoryEntity;
-import edu.uta.sis.nagnomore.data.entities.FamilyEntity;
-import edu.uta.sis.nagnomore.data.entities.TaskEntity;
-import edu.uta.sis.nagnomore.data.entities.UserEntity;
+import edu.uta.sis.nagnomore.data.entities.*;
 import edu.uta.sis.nagnomore.data.repository.CategoryRepository;
 import edu.uta.sis.nagnomore.data.repository.FamilyRepository;
 import edu.uta.sis.nagnomore.data.repository.TaskRepository;
 import edu.uta.sis.nagnomore.data.repository.UserRepository;
-import edu.uta.sis.nagnomore.domain.data.Category;
-import edu.uta.sis.nagnomore.domain.data.Task;
-import edu.uta.sis.nagnomore.domain.data.WwwFamily;
-import edu.uta.sis.nagnomore.domain.data.WwwUser;
+import edu.uta.sis.nagnomore.domain.data.*;
 import edu.uta.sis.nagnomore.domain.service.TaskService;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
@@ -72,10 +66,17 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
-    @Transactional(readOnly = false)
-    public void addTask(Task t) {
+    // Helper for common logic in create and update
+    private void HandleCreateUpdateTask(Task t, Boolean doUpdate) {
         TaskEntity te = new TaskEntity();
         BeanUtils.copyProperties(t,te);
+
+        ReminderEntity re = new ReminderEntity();
+        Reminder r = t.getReminder();
+        if(r != null) {
+            BeanUtils.copyProperties(r, re);
+            te.setReminder(re);
+        }
 
         CategoryEntity ce = new CategoryEntity();
         Category c = t.getCategory();
@@ -97,39 +98,60 @@ public class TaskServiceImpl implements TaskService {
         TaskEntity.Status tes  = getStatus(ts);
         te.setStatus(tes);
 
-        taskRepository.addTask(te);
+        ReminderEntity rem = new ReminderEntity();
+        Reminder reminder = t.getReminder();
+        if(reminder != null) {
+            BeanUtils.copyProperties(reminder, rem);
+            te.setReminder(rem);
+        }
+
+
+        if(doUpdate)
+            taskRepository.updateTask(te);
+        else
+            taskRepository.addTask(te);
 
         BeanUtils.copyProperties(te,t);
     }
 
+    @Transactional
+    public void updateAlarms(){
+        List<Task> suspects = findAllWithOverdueReminders();
+        Task t = new Task();
+        Reminder r = new Reminder();
+        Boolean alarm = false;
+        DateTime dt = null;
+
+        for(int i = 0; i < suspects.size(); i++) {
+            t = suspects.get(i);
+            TaskEntity te = taskRepository.find(t.getId());
+
+            ReminderEntity re = te.getReminder();
+            alarm = t.getAlarm();
+            if (re != null && !alarm){
+                dt = re.getTime();
+                boolean b = dt.isBeforeNow();
+                if(b){
+                    // Alarm needs to be updated
+                    t.setAlarm(true);
+                    BeanUtils.copyProperties(t,te);
+                    taskRepository.updateTask(te);
+                }
+
+            }
+        }
+    }
+
+    @Transactional(readOnly = false)
+    public void addTask(Task t) {
+
+        HandleCreateUpdateTask(t, false);
+    }
+
     @Transactional(readOnly = false)
     public void updateTask(Task t) {
-        TaskEntity te = new TaskEntity();
-        BeanUtils.copyProperties(t,te);
 
-        CategoryEntity ce = new CategoryEntity();
-        Category c = t.getCategory();
-        BeanUtils.copyProperties(c, ce);
-        te.setCategory(ce);
-
-        if (t.getFamily() != null) {
-            FamilyEntity fe = familyRepository.findFamily(t.getFamily().getId());
-            te.setFamily(fe);
-        }
-
-        UserEntity ue = userRepository.getUserById(t.getCreator().getId().intValue());
-        te.setCreator(ue);
-
-        UserEntity ue2 = userRepository.getUserById(t.getAssignee().getId().intValue());
-        te.setAssignee(ue2);
-
-        Task.Status ts = t.getStatus();
-        TaskEntity.Status tes  = getStatus(ts);
-        te.setStatus(tes);
-
-        taskRepository.updateTask(te);
-
-        BeanUtils.copyProperties(te,t);
+        HandleCreateUpdateTask(t, true);
     }
 
     @Transactional(readOnly = true)
@@ -237,6 +259,33 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
+    public List<Task> findAllTasksWithReminders() {
+
+        List <TaskEntity> list = taskRepository.findAllTasksWithReminders();
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Task> findAllOverdue() {
+
+        List <TaskEntity> list = taskRepository.findAllOverdue();
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Task> findAllWithOverdueReminders() {
+
+        List <TaskEntity> list = taskRepository.findAllWithOverdueReminders();
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
+
     // Find all bt two fields:
 
     @Transactional(readOnly = true)
@@ -334,6 +383,33 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
+    @Transactional(readOnly = true)
+    public List<Task> findAllOverdueByAssignee(WwwUser u) {
+        UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
+        List <TaskEntity> list = taskRepository.findAllOverdueByAssignee(ue);
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Task> findAllWithOverdueRemindersByAssignee(WwwUser u) {
+        UserEntity ue = userRepository.getUserById((int)(long)(u.getId()));
+        List <TaskEntity> list = taskRepository.findAllWithOverdueRemindersByAssignee(ue);
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Task> findAllByFamilyAndPrivacy(WwwFamily f, Boolean p) {
+
+        FamilyEntity fe = familyRepository.findFamily((int)(long)(f.getId()));
+        List<TaskEntity> list = taskRepository.findAllByFamilyAndPrivacy(fe, p);
+        List<Task> tasks = getTasks(list);
+
+        return tasks;
+    }
     // Find all by three parameters
 
     @Transactional(readOnly = true)
