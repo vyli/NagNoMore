@@ -274,7 +274,7 @@ public class TestTaskController {
         System.out.println("findAllWithOverdueRemmindersByAssignee() should find X tasks. Found: " +results.size());
         results = taskService.findAllByFamilyAndPrivacy(f1, false);
         System.out.println("findAllByFamilyAndPrivacy() should find 1 tasks. Found: " +results.size());
-        
+
         results = taskService.findAllByCreatorAndCategoryAndStatus(u2, cat1, Task.Status.IN_PROGRESS);
         System.out.println("findAllByCreatorAndAndCategoryAndStatus() should find X tasks. Found: " +results.size());
         results = taskService.findAllByAssigneeAndCategoryAndStatus(u3, cat1, Task.Status.IN_PROGRESS);
