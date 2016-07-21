@@ -53,10 +53,9 @@ public class ReactTasksController {
     }
 
     //in case of Task binding result errors return false
-    // TODO: ?add @RequestParam infront of Task ?
     @RequestMapping(value = "/react/tasks/create", method = RequestMethod.POST)
     @ResponseBody
-    public boolean create(@Valid Task task, BindingResult bindingResult){
+    public boolean create(@RequestBody @Valid Task task, BindingResult bindingResult){
         logger.debug("Create Task - Post - react");
         if(bindingResult.hasErrors()){
             logger.debug("Create Task bindingResult.hasErrors - react");
@@ -78,7 +77,7 @@ public class ReactTasksController {
     // TODO: ?add @RequestParam infront of Task ?
     @RequestMapping(value = "/react/tasks/update/{id}", method = RequestMethod.POST)
     @ResponseBody
-    public boolean update(@PathVariable("id") Integer id, @Valid Task task, BindingResult bindingResult){
+    public boolean update(@PathVariable("id") Integer id,@RequestBody @Valid Task task, BindingResult bindingResult){
         logger.debug("Update POST -react Task " + id);
         if(bindingResult.hasErrors()){
             logger.debug("Update POST Task " + id + "bindingResult.hasErrors");
@@ -108,9 +107,9 @@ public class ReactTasksController {
     }
 
     //find
-    @RequestMapping(value = "/react/tasks/findByCategory", method = RequestMethod.GET)
+    @RequestMapping(value = "/react/tasks/findByCategory/{categoryId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<Task> listTasksByCategory(Integer categoryId){
+    public List<Task> listTasksByCategory(@PathVariable Integer categoryId){
         logger.debug("find - react - Tasks  - Category");
         Category c = categoryService.get(categoryId);
         List<Task> list = taskService.findAllByCategory(c);
@@ -119,39 +118,39 @@ public class ReactTasksController {
 
     @RequestMapping(value = "/react/tasks/findByDuedate", method = RequestMethod.GET)
     @ResponseBody
-    public List<Task> listTasksByDueDate(DateTime start, DateTime end){
+    public List<Task> listTasksByDueDate(@RequestBody DateTime start, @RequestBody DateTime end){
         logger.debug("find - react - Tasks - DueDate");
         List<Task> list = taskService.findAllByDueDate(start, end);
         return list;
     }
     @RequestMapping(value = "/react/tasks/findByStatus", method = RequestMethod.GET)
     @ResponseBody
-    public List<Task> listTasksByStatus(Task.Status status){
+    public List<Task> listTasksByStatus(@RequestBody Task.Status status){
         logger.debug("find - react - Tasks - Status");
         List<Task> list = taskService.findAllByStatus(status);
         return list;
     }
 
-    @RequestMapping(value = "/react/tasks/findByPriority", method = RequestMethod.GET)
+    @RequestMapping(value = "/react/tasks/findByPriority/{priority}", method = RequestMethod.GET)
     @ResponseBody
-    public List<Task> listTasksByDueDate(Integer priority){
+    public List<Task> listTasksByDueDate(@PathVariable Integer priority){
         logger.debug("find - react - Tasks  - Priority");
         List<Task> list = taskService.findAllByPriority(priority);
         return list;
     }
     @RequestMapping(value = "/react/tasks/findByPrivacy", method = RequestMethod.GET)
     @ResponseBody
-    public List<Task> listTasksByDueDate(boolean privacy){
+    public List<Task> listTasksByDueDate(@RequestParam boolean privacy){
         logger.debug("find - react - Tasks  - Privacy");
         List<Task> list = taskService.findAllByPrivacy(privacy);
         return list;
     }
 
 
-    @RequestMapping(value = "/react/tasks/findByAssignee", method = RequestMethod.GET)
+    @RequestMapping(value = "/react/tasks/findByAssignee/{aId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<Task> listTasksByAssignee(long aId, @RequestParam(required=false) Integer categoryId,
-                                          @RequestParam(required=false) Task.Status status,
+    public List<Task> listTasksByAssignee(@PathVariable long aId, @RequestParam(required=false) Integer categoryId,
+                                          @RequestBody(required=false) Task.Status status,
                                           @RequestParam(required=false) Boolean privacy){
         logger.debug("find - react - Tasks - Assignee");
         List<Task> list;
@@ -201,9 +200,9 @@ public class ReactTasksController {
         return list;
     }
 
-    @RequestMapping(value = "/react/tasks/findByAssigneeAndDuedate", method = RequestMethod.GET)
+    @RequestMapping(value = "/react/tasks/findByAssigneeAndDuedate/{aId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<Task> listTasksByAssignee(long aId, DateTime start, DateTime end){
+    public List<Task> listTasksByAssignee(@PathVariable long aId,@RequestBody DateTime start,@RequestBody DateTime end){
         logger.debug("find - react - Tasks - Assignee & DueDate");
         WwwUser u = userService.getUserById(aId);
         List<Task> list = taskService.findAllByAssigneeAndDueDate(u, start,end);
@@ -212,10 +211,10 @@ public class ReactTasksController {
 
 
     // byCreator
-    @RequestMapping(value = "/react/tasks/findByCreator", method = RequestMethod.GET)
+    @RequestMapping(value = "/react/tasks/findByCreator/{cId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<Task> listTasksByCreator(long cId, @RequestParam(required=false) Integer categoryId,
-                                          @RequestParam(required=false) Task.Status status,
+    public List<Task> listTasksByCreator(@PathVariable long cId, @RequestParam(required=false) Integer categoryId,
+                                          @RequestBody(required=false) Task.Status status,
                                           @RequestParam(required=false) Boolean privacy){
         logger.debug("find - react - Tasks - Creator");
         List<Task> list;
@@ -265,9 +264,9 @@ public class ReactTasksController {
         return list;
     }
 
-    @RequestMapping(value = "/react/tasks/findByCreatorAndDuedate", method = RequestMethod.GET)
+    @RequestMapping(value = "/react/tasks/findByCreatorAndDuedate/{cId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<Task> listTasksByCreator(long cId, DateTime start, DateTime end){
+    public List<Task> listTasksByCreator(@PathVariable long cId,@RequestBody DateTime start,@RequestBody DateTime end){
         logger.debug("find - react - Tasks  - Creator & DueDate");
         WwwUser u = userService.getUserById(cId);
         List<Task> list = taskService.findAllByCreatorAndDueDate(u, start,end);
@@ -275,9 +274,9 @@ public class ReactTasksController {
     }
 
     // find by family
-    @RequestMapping(value = "/react/tasks/findByFamily", method = RequestMethod.GET)
+    @RequestMapping(value = "/react/tasks/findByFamily/{fId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<Task> listTasksByFamily(Integer fId, @RequestParam(required=false)Integer cId,
+    public List<Task> listTasksByFamily(@PathVariable Integer fId, @RequestParam(required=false)Integer cId,
                                         @RequestParam(required=false) Boolean privacy){
         logger.debug("find - react - Tasks  - Family");
         // List<Task> list;
