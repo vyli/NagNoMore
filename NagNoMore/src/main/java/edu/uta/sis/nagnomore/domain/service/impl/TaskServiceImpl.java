@@ -58,10 +58,82 @@ public class TaskServiceImpl implements TaskService {
 
         ArrayList<Task> tasks = new ArrayList<Task>(list.size());
 
+        ReminderEntity re = new ReminderEntity();
+        CategoryEntity ce = new CategoryEntity();
+        Category c = new Category();
+        Reminder r = new Reminder();
+        UserEntity ue = new UserEntity();
+        UserEntity ue2 = new UserEntity();
+        WwwUser u = new WwwUser();
+        WwwUser u2 = new WwwUser();
+        WwwFamily f = new WwwFamily();
+
+
+
         for (TaskEntity te: list) {
+
             Task t = new Task();
-            BeanUtils.copyProperties(te,t);
             tasks.add(t);
+
+            re = te.getReminder();
+            if(re != null) {
+                BeanUtils.copyProperties(re, r);
+                t.setReminder(r);
+            }
+
+            ce = te.getCategory();
+            if (ce != null) {
+                BeanUtils.copyProperties(ce, c);
+                t.setCategory(c);
+            }
+
+            if (te.getFamily() != null) {
+                FamilyEntity fe = familyRepository.findFamily(te.getFamily().getId());
+                BeanUtils.copyProperties(fe, f);
+                t.setFamily(f);
+            }
+
+            ue = userRepository.getUserById(te.getCreator().getId().intValue());
+            FamilyEntity fe1 = ue.getFamily();
+            WwwFamily wf= new WwwFamily();
+            BeanUtils.copyProperties(fe1, wf);
+            u.setFamily(wf);
+            BeanUtils.copyProperties(ue, u);
+            t.setCreator(u);
+
+            ue2 = userRepository.getUserById(te.getAssignee().getId().intValue());
+            FamilyEntity fe2 = ue2.getFamily();
+            WwwFamily wf2= new WwwFamily();
+            BeanUtils.copyProperties(fe2, wf2);
+            u.setFamily(wf2);
+
+            BeanUtils.copyProperties(ue2, u2);
+            t.setAssignee(u2);
+
+            TaskEntity.Status tes = te.getStatus();
+            Task.Status ts = null;
+            switch (tes) {
+                case NEEDS_ACTION:
+                    ts = Task.Status.NEEDS_ACTION;
+                    break;
+                case IN_PROGRESS:
+                    ts = Task.Status.IN_PROGRESS;
+                    break;
+                case COMPLETED:
+                    ts = Task.Status.COMPLETED;
+                    break;
+            }
+
+            t.setStatus(ts);
+
+            Reminder reminder = new Reminder();
+            ReminderEntity rem = te.getReminder();
+            if(rem != null) {
+                BeanUtils.copyProperties(rem, reminder);
+                t.setReminder(reminder);
+            }
+
+            BeanUtils.copyProperties(te,t);
         }
         return tasks;
     }
