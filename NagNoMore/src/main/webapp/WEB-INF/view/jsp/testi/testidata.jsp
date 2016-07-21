@@ -89,7 +89,7 @@
 
 
         $.ajax({
-            url:"/test/gettasks",
+            url:"/react/tasks",
             dataType: 'json',
             contentType: "application/json",
             cache: false,
@@ -143,7 +143,9 @@
                 contentType: "application/json",
                 cache: false,
                 success: function(data) {
+
                     console.log("Success: ", data);
+
                 },
                 error: function(e) {
                     console.log("Error: ", e);

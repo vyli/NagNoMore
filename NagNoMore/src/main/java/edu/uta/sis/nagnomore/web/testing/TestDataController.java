@@ -45,6 +45,11 @@ public class TestDataController {
     }
 
 
+    @RequestMapping(value="/react/nagnomore")
+    public String pleaseDeliver(){
+        return "/jsp/index";
+    }
+
     @RequestMapping(value="/test/getcategories")
     public @ResponseBody List<Category> getCategoryDataViaAjax(){
 
