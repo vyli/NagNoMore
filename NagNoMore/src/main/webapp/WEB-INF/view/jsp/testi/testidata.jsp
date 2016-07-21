@@ -44,6 +44,7 @@
         ];
 
 
+
         $("#getcategorydataform").submit(function(event){
 
             event.preventDefault();
@@ -56,13 +57,88 @@
             putDataViaAjax(listdata);
         })
 
+        $("#getalldataform").submit(function(event){
+
+            event.preventDefault();
+            getAllDataViaAjax();
+
+        })
+
+
+
+
+
 
     });
+    function getAllDataViaAjax(){
+        console.log("Got here");
+
+        $.ajax({
+            url:"/test/getcategories",
+            dataType: 'json',
+            contentType: "application/json",
+            cache: false,
+            success: function(data) {
+                console.log(JSON.stringify(data));
+            },
+            error: function(e) {
+                console.log("Error: ", e);
+            }
+        });
+
+
+
+        $.ajax({
+            url:"/test/gettasks",
+            dataType: 'json',
+            contentType: "application/json",
+            cache: false,
+            success: function(data) {
+                console.log(JSON.stringify(data));
+            },
+            error: function(e) {
+                console.log("Error: ", e);
+            }
+        });
+
+        $.ajax({
+            url:"/test/getfamilies",
+            dataType: 'json',
+            contentType: "application/json",
+            cache: false,
+            success: function(data) {
+                console.log(JSON.stringify(data));
+            },
+            error: function(e) {
+                console.log("Error: ", e);
+            }
+        });
+
+        $.ajax({
+            url:"/test/getfamilymembers",
+            dataType: 'json',
+            contentType: "application/json",
+            cache: false,
+            success: function(data) {
+                console.log(JSON.stringify(data));
+            },
+            error: function(e) {
+                console.log("Error: ", e);
+            }
+        });
+
+
+
+
+
+    }
+
+
 
         function getDataViaAjax(){
 
             $.ajax({
-                url:"/test/getdatatestajax",
+                url:"/test/getcategories",
                 dataType: 'json',
                 contentType: "application/json",
                 cache: false,
@@ -115,14 +191,23 @@
 <div id="app">
 
     <form id="getcategorydataform">
-        <input type="hidden" id="property">
+        <input type="hidden" id="property1" />
         <button type="submit" id="getdatasubmit">Go get category data</button>
     </form>
 
     <form id="putcategorydataform">
-        <input type="hidden" id="property">
+        <input type="hidden" id="property2" />
         <button type="submit" id="putdatasubmit">Put category data</button>
     </form>
+
+    <form id="getalldataform">
+        <input type="hidden" id="property3" />
+        <button type="submit" id="getalldatasubmit">Go get all data</button>
+    </form>
+
+
+
+
 
 </div>
 

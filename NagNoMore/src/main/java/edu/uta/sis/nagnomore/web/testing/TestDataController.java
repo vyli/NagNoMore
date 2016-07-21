@@ -45,29 +45,38 @@ public class TestDataController {
     }
 
 
-    @RequestMapping(value="/test/getdatatestajax")
-    public @ResponseBody List<Category> getDataViaAjax(){
-
-        //Eeron koodista kopioitu
-        Category ce1 = new Category();
-        ce1.setTitle("Harrastukset");
-        ce1.setDescription("Kategoria harrastusluonteiselle toiminnalle.");
-        cs.create(ce1);
-
-        Category ce2 = new Category();
-        ce2.setTitle("Lääkkeet");
-        ce2.setDescription("Kategoria muistutuksille lääkkeenottoajoista.");
-        cs.create(ce2);
-
-        Category ce3 = new Category();
-        ce3.setTitle("Kotityöt");
-        ce3.setDescription("Kategoria kotitöille.");
-        cs.create(ce3);
+    @RequestMapping(value="/test/getcategories")
+    public @ResponseBody List<Category> getCategoryDataViaAjax(){
 
         List<Category> list = cs.getCategories();
 
         return list;
     }
+
+    @RequestMapping(value="/test/getfamilies")
+    public @ResponseBody List<WwwFamily> getFamilyDataViaAjax(){
+
+        List<WwwFamily> list = familyService.listAllFamilies();
+
+        return list;
+    }
+
+    @RequestMapping(value="/test/getfamilymembers")
+    public @ResponseBody List<WwwUser> getFamilyMemberDataViaAjax(){
+
+        List<WwwUser> list = us.getUsers();
+
+        return list;
+    }
+
+    @RequestMapping(value="/test/gettasks")
+    public @ResponseBody List<Task> getTaskDataViaAjax(){
+
+        List<Task> list = ts.findAll();
+
+        return list;
+    }
+
 
     @RequestMapping(value="/test/putdatatestajax")
     public String postDataViaAjax(@RequestBody List<Category> list){
