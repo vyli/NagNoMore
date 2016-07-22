@@ -94,10 +94,14 @@ public class TaskServiceImpl implements TaskService {
             }
 
             ue = userRepository.getUserById(te.getCreator().getId().intValue());
+            long uid = ue.getId();
+
+
             FamilyEntity fe1 = ue.getFamily();
             WwwFamily wf= new WwwFamily();
             BeanUtils.copyProperties(fe1, wf);
             u.setFamily(wf);
+            u.setId(uid);
             BeanUtils.copyProperties(ue, u);
             t.setCreator(u);
 
