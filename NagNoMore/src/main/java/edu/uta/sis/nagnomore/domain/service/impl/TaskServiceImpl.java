@@ -96,7 +96,6 @@ public class TaskServiceImpl implements TaskService {
             ue = userRepository.getUserById(te.getCreator().getId().intValue());
             long uid = ue.getId();
 
-
             FamilyEntity fe1 = ue.getFamily();
             WwwFamily wf= new WwwFamily();
             BeanUtils.copyProperties(fe1, wf);
@@ -106,10 +105,13 @@ public class TaskServiceImpl implements TaskService {
             t.setCreator(u);
 
             ue2 = userRepository.getUserById(te.getAssignee().getId().intValue());
+            long uid2 = ue2.getId();
+
             FamilyEntity fe2 = ue2.getFamily();
             WwwFamily wf2= new WwwFamily();
             BeanUtils.copyProperties(fe2, wf2);
-            u.setFamily(wf2);
+            u2.setFamily(wf2);
+            u2.setId(uid2);
 
             BeanUtils.copyProperties(ue2, u2);
             t.setAssignee(u2);
