@@ -58,22 +58,19 @@ public class TaskServiceImpl implements TaskService {
 
         ArrayList<Task> tasks = new ArrayList<Task>(list.size());
 
-        ReminderEntity re = new ReminderEntity();
-        CategoryEntity ce = new CategoryEntity();
-        Category c = new Category();
-        Reminder r = new Reminder();
-        UserEntity ue = new UserEntity();
-        UserEntity ue2 = new UserEntity();
-        WwwUser u = new WwwUser();
-        WwwUser u2 = new WwwUser();
-        WwwFamily f = new WwwFamily();
-
-
-
         for (TaskEntity te: list) {
 
             Task t = new Task();
-            tasks.add(t);
+
+            ReminderEntity re = new ReminderEntity();
+            CategoryEntity ce = new CategoryEntity();
+            Category c = new Category();
+            Reminder r = new Reminder();
+            UserEntity ue = new UserEntity();
+            UserEntity ue2 = new UserEntity();
+            WwwUser u = new WwwUser();
+            WwwUser u2 = new WwwUser();
+            WwwFamily f = new WwwFamily();
 
             re = te.getReminder();
             if(re != null) {
@@ -140,6 +137,7 @@ public class TaskServiceImpl implements TaskService {
             }
 
             BeanUtils.copyProperties(te,t);
+            tasks.add(t);
         }
         return tasks;
     }
