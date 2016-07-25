@@ -27,35 +27,34 @@ public class TaskSkeletonServiceImpl implements TaskSkeletonService {
         Task task = new Task();
 
         Integer categoryId = ts.getCategoryId();
-        Category category = null;
+        Category category = new Category();
         if(categoryId != null){
             category = categoryService.get(categoryId);
         }
 
         Integer familyId = ts.getFamilyId();
-        WwwFamily family = null;
+        WwwFamily family = new WwwFamily();
         if(categoryId != null){
             family = familyService.findFamily(familyId);
         }
 
         Integer creatorId = ts.getCreatorId();
-        WwwUser creator = null;
+        WwwUser creator = new WwwUser();
         if(creatorId != null){
             creator = userService.getUserById((long)creatorId);
         }
 
         Integer assigneeId = ts.getAssigneeId();
-        WwwUser assignee = null;
+        WwwUser assignee = new WwwUser();
         if(assigneeId != null){
             assignee = userService.getUserById((long)assigneeId);
         }
 
         String statusId = ts.getStatus();
-        Task.Status taskStatus = null;
+        Task.Status taskStatus = Task.Status.NEEDS_ACTION;
         if(statusId.equals("NEEDS_ACTION")){
             taskStatus = Task.Status.NEEDS_ACTION;
-        }
-        else if(statusId.equals("IN_PROGRESS")) {
+        } else if(statusId.equals("IN_PROGRESS")) {
             taskStatus = Task.Status.IN_PROGRESS;
         }else if(statusId.equals("COMPLETED")) {
             taskStatus = Task.Status.COMPLETED;
