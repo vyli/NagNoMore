@@ -43,7 +43,45 @@
             { id: 6,  title: "Talo",  description: "Kategoria taloon liittyville asioille."}
         ];
 
+        var taskFull = {
+            "id": undefined,
+            "title": "Leivo piiras",
+            "description": "Ainakin kymmenelle, mieluusti mustikka, ei maitoa",
+            "created": moment.now(),
+            "due": moment.now(),
+            "priority": 3,
+            "privacy": false,
+            "alarm": undefined,
+            "category": {"id":15,"title":"Kotityöt","description":"Kategoria kotitöille."},
+            "family": { id: 5, familyName: "Rujot" },
+            "creator": {"id":17,"username":"Ville","password":"salasana","enabled":true,"email":"ville@huu.haa","phoneNumber":"123456789","fullName":"Ville Rujo","family":null,"created":null,"credentialsNonExpired":true,"accountNonExpired":true,"accountNonLocked":true,"role":"ROLE_PARENT","authorities":[{"authority":"ROLE_PARENT"}]},
+            "assignee": {"id":17,"username":"Ville","password":"salasana","enabled":true,"email":"ville@huu.haa","phoneNumber":"123456789","fullName":"Ville Rujo","family":null,"created":null,"credentialsNonExpired":true,"accountNonExpired":true,"accountNonLocked":true,"role":"ROLE_PARENT","authorities":[{"authority":"ROLE_PARENT"}]},
+            "location": undefined,
+            "reminder": undefined,
+            "status": "NEEDS_ACTION"
 
+        }
+
+        var task = {
+            "id": undefined,
+            "title": "Leivo piiras",
+            "description": "Ainakin kymmenelle, mieluusti mustikka, ei maitoa",
+            "created": moment.now(),
+            "due": moment.now(),
+            "priority": 3,
+            "privacy": false,
+            "alarm": false,
+            "categoryId": 15,
+            "familyId": 5,
+            "creatorId": 17,
+            "assigneeId": 18,
+            "location": undefined,
+            "reminder": undefined,
+            "status": "NEEDS_ACTION"
+
+        }
+
+        console.log(task);
 
         $("#getcategorydataform").submit(function(event){
 
@@ -64,6 +102,12 @@
 
         })
 
+        $("#puttaskform").submit(function(event){
+
+            event.preventDefault();
+            putTask(task);
+
+        })
 
 
 
@@ -181,6 +225,31 @@
         }
 
 
+    function putTask(task){
+
+        $.ajax({
+            url:"/test/puttask",
+            dataType: 'json',
+            type: 'POST',
+            data: JSON.stringify(task),
+            contentType: "application/json",
+            dataType: "html",
+            cache: false,
+            success: function(data) {
+                console.log("Success");
+                console.log(data);
+            },
+            error: function(e) {
+                console.log("Error: ", e);
+            },
+            done: function(e){
+                console.log("Done");
+            }
+
+        })
+    }
+
+
 
 
 
@@ -202,9 +271,15 @@
         <button type="submit" id="putdatasubmit">Put category data</button>
     </form>
 
+
     <form id="getalldataform">
         <input type="hidden" id="property3" />
         <button type="submit" id="getalldatasubmit">Go get all data</button>
+    </form>
+
+    <form id="puttaskform">
+        <input type="hidden" id="property4" />
+        <button type="submit" id="puttasksubmit">Put task</button>
     </form>
 
 

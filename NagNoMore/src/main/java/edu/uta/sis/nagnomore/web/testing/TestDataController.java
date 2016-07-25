@@ -1,20 +1,17 @@
 package edu.uta.sis.nagnomore.web.testing;
 
-import edu.uta.sis.nagnomore.domain.data.Category;
-import edu.uta.sis.nagnomore.domain.data.Task;
-import edu.uta.sis.nagnomore.domain.data.WwwFamily;
-import edu.uta.sis.nagnomore.domain.data.WwwUser;
-import edu.uta.sis.nagnomore.domain.service.CategoryService;
-import edu.uta.sis.nagnomore.domain.service.FamilyService;
-import edu.uta.sis.nagnomore.domain.service.TaskService;
-import edu.uta.sis.nagnomore.domain.service.UserService;
+import edu.uta.sis.nagnomore.domain.data.*;
+import edu.uta.sis.nagnomore.domain.service.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.Valid;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -39,6 +36,9 @@ public class TestDataController {
     @Autowired
     TaskService ts;
 
+    @Autowired
+    TaskSkeletonService tss;
+
     @RequestMapping(value="/test/riinatest")
     public String testMe(){
         return "/jsp/testi/testidata";
@@ -57,6 +57,7 @@ public class TestDataController {
 
         return list;
     }
+
 
     @RequestMapping(value="/test/getfamilies")
     public @ResponseBody List<WwwFamily> getFamilyDataViaAjax(){
@@ -82,6 +83,22 @@ public class TestDataController {
         return list;
     }
 
+    @RequestMapping(value="/test/puttask", method = RequestMethod.POST)
+    public @ResponseBody List<Task> putTaskAndDeliver(@RequestBody TaskSkeleton taskSkeleton){
+
+
+        System.out.println(taskSkeleton.toString());
+
+        Task task = tss.convertToTask(taskSkeleton);
+
+        ts.addTask(task);
+
+
+        List<Task> list = ts.findAll();
+
+        return list;
+
+    }
 
     @RequestMapping(value="/test/putdatatestajax")
     public String postDataViaAjax(@RequestBody List<Category> list){
